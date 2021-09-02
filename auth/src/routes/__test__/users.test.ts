@@ -2,11 +2,11 @@ import request from "supertest";
 import { app } from "../../app";
 
 // constants
-import { Role } from "../../constants/enum-role";
-import { UserPayload } from "../../constants/user-payload";
+import { Role } from "@fujingr/common";
+import { UserPayload } from "@fujingr/common";
 
 // helpers
-import { generateCookie, extractCookie } from "../../helpers/auth-cookie-test";
+import { generateCookie, extractCookie } from "@fujingr/common";
 
 test("send 401 when unauthorized", async () => {
   await request(app).get("/api/auth/users").expect(401);

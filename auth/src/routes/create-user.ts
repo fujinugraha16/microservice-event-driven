@@ -22,7 +22,7 @@ router.post(
   // middleware current user
   currentUser,
   // middleware require auth
-  requireAuth(Role.admin),
+  requireAuth([Role.admin]),
   // input validation
   body(["username", "name", "role"])
     .trim()

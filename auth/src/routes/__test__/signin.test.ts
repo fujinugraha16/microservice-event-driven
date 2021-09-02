@@ -3,7 +3,7 @@ import { app } from "../../app";
 import { hashSync } from "bcrypt";
 
 // constants
-import { Role } from "../../constants/enum-role";
+import { Role } from "@fujingr/common";
 
 // models
 import { User } from "../../models/user";

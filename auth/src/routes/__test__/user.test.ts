@@ -7,11 +7,11 @@ import { app } from "../../app";
 import { User } from "../../models/user";
 
 // contansts
-import { Role } from "../../constants/enum-role";
-import { UserPayload } from "../../constants/user-payload";
+import { Role } from "@fujingr/common";
+import { UserPayload } from "@fujingr/common";
 
 // helpers
-import { extractCookie, generateCookie } from "../../helpers/auth-cookie-test";
+import { extractCookie, generateCookie } from "@fujingr/common";
 
 const id = new Types.ObjectId().toHexString();
 

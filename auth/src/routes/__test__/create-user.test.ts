@@ -3,11 +3,11 @@ import { app } from "../../app";
 import { hashSync } from "bcrypt";
 
 // constants
-import { Role } from "../../constants/enum-role";
-import { UserPayload } from "../../constants/user-payload";
+import { Role } from "@fujingr/common";
+import { UserPayload } from "@fujingr/common";
 
 // helpers
-import { extractCookie, generateCookie } from "../../helpers/auth-cookie-test";
+import { extractCookie, generateCookie } from "@fujingr/common";
 
 // models
 import { User } from "../../models/user";

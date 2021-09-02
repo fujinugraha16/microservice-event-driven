@@ -7,7 +7,7 @@ import { Role } from "../constants/enum-role";
 import { NotAuthorizedError } from "../errors/not-authorized-error";
 
 export const requireAuth =
-  (role: Role) => (req: Request, res: Response, next: NextFunction) => {
+  (roles: Role[]) => (req: Request, res: Response, next: NextFunction) => {
     if (!req.currentUser) {
       throw new NotAuthorizedError();
     }
@@ -16,7 +16,7 @@ export const requireAuth =
       return next();
     }
 
-    if (req.currentUser.role !== role) {
+    if (!roles.includes(req.currentUser.role)) {
       throw new NotAuthorizedError();
     }
 

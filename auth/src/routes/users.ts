@@ -1,8 +1,7 @@
 import express from "express";
 
 // middlewares
-import { requireAuth } from "@fujingr/common";
-import { currentUser } from "@fujingr/common";
+import { requireAuth, currentUser } from "@fujingr/common";
 
 // contants
 import { Role } from "@fujingr/common";
@@ -15,7 +14,7 @@ const router = express.Router();
 router.get(
   "/api/auth/users",
   currentUser,
-  requireAuth(Role.admin),
+  requireAuth([Role.admin]),
   async (req, res) => {
     const users = await User.find().ne("role", Role.superuser);
 

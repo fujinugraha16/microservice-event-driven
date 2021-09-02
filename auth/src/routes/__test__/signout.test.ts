@@ -6,7 +6,7 @@ import { app } from "../../app";
 import { User } from "../../models/user";
 
 // constans
-import { Role } from "../../constants/enum-role";
+import { Role } from "@fujingr/common";
 
 const createUser = async () => {
   const user = new User({

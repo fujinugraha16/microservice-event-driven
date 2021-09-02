@@ -7,11 +7,11 @@ import { app } from "../../app";
 import { User } from "../../models/user";
 
 // constants
-import { Role } from "../../constants/enum-role";
+import { Role } from "@fujingr/common";
 
 // helper
-import { generateCookie, extractCookie } from "../../helpers/auth-cookie-test";
-import { UserPayload } from "../../constants/user-payload";
+import { generateCookie, extractCookie } from "@fujingr/common";
+import { UserPayload } from "@fujingr/common";
 
 const createUser = async () => {
   const user = new User({
