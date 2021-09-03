@@ -100,7 +100,7 @@ test("fails if all fields required empty", async () => {
 });
 
 test("send 400 when code already exists", async () => {
-  const [code, name, typeOfSale] = ["ASD", "Test", TypeOfSale.retail];
+  const [code, name, typeOfSale] = ["ARTICLE", "Test", TypeOfSale.retail];
   const [width, gsm, safetyStock] = [100, 10, 20];
 
   await createArticle();

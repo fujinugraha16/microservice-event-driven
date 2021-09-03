@@ -10,6 +10,12 @@ import { deleteArticleRouter } from "./routes/article/delete-article";
 import { showArticleRouter } from "./routes/article/show-article";
 import { listArticlesRouter } from "./routes/article/list-articles";
 
+import { createLotRouter } from "./routes/lot/create-lot";
+import { deleteLotRouter } from "./routes/lot/delete-lot";
+import { addItemsRouter } from "./routes/lot/add-items";
+import { showLotRouter } from "./routes/lot/show-lot";
+import { listLotRouter } from "./routes/lot/list-lot";
+
 // middlewares
 import { errorHandler, currentUser } from "@fujingr/common";
 
@@ -38,6 +44,12 @@ app.use(updateArticleRouter);
 app.use(deleteArticleRouter);
 app.use(showArticleRouter);
 app.use(listArticlesRouter);
+
+app.use(createLotRouter);
+app.use(deleteLotRouter);
+app.use(addItemsRouter);
+app.use(showLotRouter);
+app.use(listLotRouter);
 
 app.all("*", async () => {
   throw new NotFoundError();

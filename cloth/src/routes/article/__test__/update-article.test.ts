@@ -111,13 +111,10 @@ test("bad request if wrong genders", async () => {
 });
 
 test("send 400 when bad param 'id'", async () => {
-  const [name, typeOfSale] = ["Test", TypeOfSale.retail];
-  const [width, gsm, safetyStock] = [100, 10, 20];
-
   await request(app)
     .put("/api/cloth/article/update/asfdsdaf")
     .set("Cookie", generateCookie())
-    .send({ name, typeOfSale, width, gsm, safetyStock })
+    .send({})
     .expect(400);
 });
 

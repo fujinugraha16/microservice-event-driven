@@ -20,6 +20,7 @@ const router = express.Router();
 router.put(
   "/api/cloth/article/update/:id",
   requireAuth([Role.admin, Role.employee]),
+  validateParamId,
   body(["name", "typeOfSale"]).notEmpty().withMessage("Must be filled"),
   body(["width", "gsm", "safetyStock"])
     .isInt({ gt: 0 })
@@ -33,7 +34,6 @@ router.put(
   validateRequest,
   validateTypeOfSale,
   validateGenders,
-  validateParamId,
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const {
