@@ -4,11 +4,11 @@ import { Lot } from "../models/lot";
 
 const designId = new Types.ObjectId().toHexString();
 
-export const createLot = (articleId: string) => async () => {
+export const createLot = async (article: string = articleId) => {
   const lot = new Lot({
     code: "ARTICLE-LOT",
     pureLotCode: "LOT",
-    article: articleId,
+    article,
     designs: [designId],
     supplier: "PT. Aliex Retail",
   });

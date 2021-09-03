@@ -16,6 +16,12 @@ import { addItemsRouter } from "./routes/lot/add-items";
 import { showLotRouter } from "./routes/lot/show-lot";
 import { listLotRouter } from "./routes/lot/list-lot";
 
+import { createPriceRouter } from "./routes/price/create-price";
+import { deletePriceRouter } from "./routes/price/delete-price";
+import { updatePriceRouter } from "./routes/price/update-price";
+import { showPriceRouter } from "./routes/price/show-price";
+import { listPriceRouter } from "./routes/price/list-price";
+
 // middlewares
 import { errorHandler, currentUser } from "@fujingr/common";
 
@@ -50,6 +56,12 @@ app.use(deleteLotRouter);
 app.use(addItemsRouter);
 app.use(showLotRouter);
 app.use(listLotRouter);
+
+app.use(createPriceRouter);
+app.use(deletePriceRouter);
+app.use(updatePriceRouter);
+app.use(showPriceRouter);
+app.use(listPriceRouter);
 
 app.all("*", async () => {
   throw new NotFoundError();

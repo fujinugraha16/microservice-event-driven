@@ -6,17 +6,17 @@ import { Role, UserPayload } from "@fujingr/common";
 
 // helpers
 import { generateCookie, extractCookie } from "@fujingr/common";
-import { createLot } from "../../../helpers/lot-test";
+import { createPrice } from "../../../helpers/price-test";
 
 test("send 401 when not provide cookie", async () => {
-  await request(app).get("/api/cloth/lot/list").expect(401);
+  await request(app).get("/api/cloth/price/list").expect(401);
 });
 
 test("send 401 when provide cookie with role customer", async () => {
   const cookie = generateCookie(Role.customer);
 
   const response = await request(app)
-    .get("/api/cloth/lot/list")
+    .get("/api/cloth/price/list")
     .set("Cookie", cookie);
 
   const payload = extractCookie(cookie) as UserPayload;
@@ -25,11 +25,11 @@ test("send 401 when provide cookie with role customer", async () => {
   expect([Role.admin, Role.employee].includes(payload.role)).not.toEqual(true);
 });
 
-test("send lots when fetch successfully", async () => {
-  await createLot();
+test("send 200 when fetch prices successfully", async () => {
+  await createPrice();
 
   const response = await request(app)
-    .get("/api/cloth/lot/list")
+    .get("/api/cloth/price/list")
     .set("Cookie", generateCookie())
     .expect(200);
 

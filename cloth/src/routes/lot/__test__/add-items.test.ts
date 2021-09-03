@@ -181,7 +181,7 @@ test("items successfully added", async () => {
 });
 
 test("lot inputSequence has been updated", async () => {
-  const lot = await createLot(articleId)();
+  const lot = await createLot();
 
   const designs = [
     {
@@ -205,7 +205,7 @@ test("lot inputSequence has been updated", async () => {
 });
 
 test("send 200 when successfully add items to lot", async () => {
-  const lot = await createLot(articleId)();
+  const lot = await createLot();
 
   const designs = [
     {

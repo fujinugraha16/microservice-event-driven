@@ -7,7 +7,7 @@ import { Role, UserPayload } from "@fujingr/common";
 // helpers
 import { generateCookie, extractCookie } from "@fujingr/common";
 import { createArticle } from "../../../helpers/article-test";
-import { createLot, articleId, id } from "../../../helpers/lot-test";
+import { createLot, id } from "../../../helpers/lot-test";
 import { randomString } from "../../../helpers/random-string";
 
 // models
@@ -89,7 +89,7 @@ test("designs and items has been deleted", async () => {
 });
 
 test("successfully deleted lot", async () => {
-  const lot = await createLot(articleId)();
+  const lot = await createLot();
 
   await request(app)
     .delete(`/api/cloth/lot/delete/${lot.id}`)

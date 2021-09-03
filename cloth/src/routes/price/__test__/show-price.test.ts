@@ -6,17 +6,17 @@ import { Role, UserPayload } from "@fujingr/common";
 
 // helpers
 import { generateCookie, extractCookie } from "@fujingr/common";
-import { createLot, articleId, id } from "../../../helpers/lot-test";
+import { createPrice, id } from "../../../helpers/price-test";
 
 test("send 401 when not provide cookie", async () => {
-  await request(app).get("/api/cloth/lot/show/asdfas").expect(401);
+  await request(app).get("/api/cloth/price/show/asdfasdf").expect(401);
 });
 
 test("send 401 when provide cookie with role customer", async () => {
   const cookie = generateCookie(Role.customer);
 
   const response = await request(app)
-    .get("/api/cloth/lot/show/asdfas")
+    .get("/api/cloth/price/show/asdfasdf")
     .set("Cookie", cookie);
 
   const payload = extractCookie(cookie) as UserPayload;
@@ -27,28 +27,28 @@ test("send 401 when provide cookie with role customer", async () => {
 
 test("bad request when param 'id' invalid", async () => {
   await request(app)
-    .get("/api/cloth/lot/show/asdfas")
+    .get("/api/cloth/price/show/asdfasdf")
     .set("Cookie", generateCookie())
     .expect(400);
 });
 
-test("send 404 if lot not found", async () => {
+test("send 404 if price not found", async () => {
   await request(app)
-    .get(`/api/cloth/lot/show/${id}`)
+    .get(`/api/cloth/price/show/${id}`)
     .set("Cookie", generateCookie())
     .expect(404);
 });
 
-test("send 200 if lot found", async () => {
-  const lot = await createLot();
+test("send 200 when price found", async () => {
+  const price = await createPrice();
 
   const response = await request(app)
-    .get(`/api/cloth/lot/show/${lot.id}`)
+    .get(`/api/cloth/price/show/${price.id}`)
     .set("Cookie", generateCookie())
     .expect(200);
 
-  expect(response.body.code).toEqual(lot.code);
-  expect(response.body.pureLotCode).toEqual(lot.pureLotCode);
-  expect(response.body.article.toString()).toEqual(lot.article.toString());
-  expect(response.body.supplier).toEqual(lot.supplier);
+  expect(response.body.lot.toString()).toEqual(price.lot.toString());
+  expect(response.body.retailPrice).toEqual(price.retailPrice);
+  expect(response.body.wholesalerPrice).toEqual(price.wholesalerPrice);
+  expect(response.body.lotPrice).toEqual(price.lotPrice);
 });

@@ -11,7 +11,7 @@ export const validateBodyObjectId =
     }
 
     if (!Types.ObjectId.isValid(req.body[field])) {
-      throw new BadRequestError(`Param '${field}' invalid`);
+      throw new BadRequestError(`Field '${field}' invalid`);
     }
 
     next();

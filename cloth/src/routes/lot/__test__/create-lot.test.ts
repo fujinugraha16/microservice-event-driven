@@ -174,7 +174,7 @@ test("send 404 error if article not found", async () => {
 
 test("if lot already exist send bad request", async () => {
   const articleDoc = await createArticle();
-  const existingLot = await createLot(articleDoc.id)();
+  const existingLot = await createLot(articleDoc.id);
 
   const [pureLotCode, article, supplier] = [
     "LOT",
