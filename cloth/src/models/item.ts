@@ -1,11 +1,11 @@
-import { Schema, model, Types } from "mongoose";
+import { Schema, model, PopulatedDoc, Document } from "mongoose";
 
 interface ItemAttrs {
   qrCode: string;
   sold?: boolean;
   lengthInMeters: number;
   lengthInYards: number;
-  design: Types.ObjectId;
+  design: PopulatedDoc<Document>;
 }
 
 const itemSchema = new Schema<ItemAttrs>(

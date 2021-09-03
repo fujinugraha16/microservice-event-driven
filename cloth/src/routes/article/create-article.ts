@@ -2,9 +2,12 @@ import express, { Request, Response } from "express";
 import { body } from "express-validator";
 
 // middlewares
-import { validateRequest, requireAuth } from "@fujingr/common";
-import { validateTypeOfSale } from "../../middlewares/validate-type-of-sale";
-import { validateGenders } from "../../middlewares/validate-genders";
+import {
+  validateRequest,
+  requireAuth,
+  validateTypeOfSale,
+  validateGenders,
+} from "@fujingr/common";
 
 // models
 import { Article, ArticleAttrs } from "../../models/article";
@@ -14,6 +17,10 @@ import { BadRequestError } from "@fujingr/common";
 
 // constanta
 import { Role } from "@fujingr/common";
+
+// events
+import { natsWrapper } from "../../nats-wrapper";
+import { ArticleCreatedPublisher } from "../../events/publisher/article-created-publisher";
 
 const router = express.Router();
 
@@ -65,6 +72,21 @@ router.post(
       detailReferences,
     });
     await article.save();
+
+    // publish event
+    await new ArticleCreatedPublisher(natsWrapper.client).publish({
+      id: article.id,
+      code: article.code,
+      name: article.name,
+      width: article.width,
+      gsm: article.gsm,
+      safetyStock: article.safetyStock,
+      typeOfSale: article.typeOfSale,
+      activities: article.activities,
+      departments: article.departments,
+      genders: article.genders,
+      detailReferences: article.detailReferences,
+    });
 
     res.status(201).send(article);
   }

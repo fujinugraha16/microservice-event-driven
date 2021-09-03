@@ -3,7 +3,7 @@ import { Types } from "mongoose";
 import { Article } from "../models/article";
 
 // constants
-import { TypeOfSale } from "../constants/enum-type-of-sale";
+import { TypeOfSale } from "@fujingr/common";
 
 export const createArticle = async () => {
   const article = new Article({

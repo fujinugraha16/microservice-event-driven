@@ -6,7 +6,6 @@ import { Article } from "../../../models/article";
 
 // constants
 import { Role, UserPayload } from "@fujingr/common";
-import { TypeOfSale } from "../../../constants/enum-type-of-sale";
 
 // helpers
 import { generateCookie, extractCookie } from "@fujingr/common";

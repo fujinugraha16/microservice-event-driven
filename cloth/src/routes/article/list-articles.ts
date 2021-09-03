@@ -5,6 +5,8 @@ import { requireAuth } from "@fujingr/common";
 
 // constants
 import { Role } from "@fujingr/common";
+
+// models
 import { Article } from "../../models/article";
 
 const router = express.Router();

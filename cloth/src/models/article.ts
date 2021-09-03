@@ -1,8 +1,7 @@
 import { Schema, model } from "mongoose";
 
 // constants
-import { TypeOfSale } from "../constants/enum-type-of-sale";
-import { Gender } from "../constants/enum-gender";
+import { TypeOfSale, Gender } from "@fujingr/common";
 
 interface ArticleAttrs {
   code: string;

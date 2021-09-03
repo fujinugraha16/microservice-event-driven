@@ -10,7 +10,6 @@ import { createPrice, id, lotId } from "../../../helpers/price-test";
 import { createLot } from "../../../helpers/lot-test";
 
 // models
-import { Price } from "../../../models/price";
 import { Lot } from "../../../models/lot";
 
 test("send 401 when not provide cookie", async () => {

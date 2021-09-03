@@ -37,7 +37,7 @@ router.post(
         username: user.username,
         role: user.role,
       },
-      "asdf"
+      process.env.JWT_KEY!
     );
 
     req.session = {

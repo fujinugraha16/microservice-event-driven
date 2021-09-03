@@ -2,8 +2,7 @@ import request from "supertest";
 import { app } from "../../../app";
 
 // constants
-import { Role, UserPayload } from "@fujingr/common";
-import { TypeOfSale } from "../../../constants/enum-type-of-sale";
+import { Role, UserPayload, TypeOfSale } from "@fujingr/common";
 
 // helpers
 import { generateCookie, extractCookie } from "@fujingr/common";

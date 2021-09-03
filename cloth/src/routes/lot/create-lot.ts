@@ -2,8 +2,11 @@ import express, { Request, Response } from "express";
 import { body } from "express-validator";
 
 // middlewares
-import { requireAuth, validateRequest } from "@fujingr/common";
-import { validateBodyObjectId } from "../../middlewares/validte-body-object-id";
+import {
+  requireAuth,
+  validateRequest,
+  validateBodyObjectId,
+} from "@fujingr/common";
 import { validateDesignsPayload } from "../../middlewares/validate-designs-payload";
 
 // constants
@@ -19,6 +22,11 @@ import { NotFoundError, BadRequestError } from "@fujingr/common";
 // helpers
 import { updateDesignsPayload } from "../../helpers/update-designs-payload";
 import { saveDesignsAndItems } from "../../helpers/save-designs-and-items";
+
+// events
+import { natsWrapper } from "../../nats-wrapper";
+import { LotCreatedPublisher } from "../../events/publisher/lot-created-event";
+import { DesignPayloadEvent } from "@fujingr/common";
 
 const router = express.Router();
 
@@ -69,6 +77,24 @@ router.post(
     // save designIds to lot
     lot.set({ designs: designIds });
     await lot.save();
+
+    const { designs: lotDesigns } = await lot.populate({
+      path: "designs",
+      select: "-_id name color items",
+      populate: {
+        path: "items",
+        select: "lengthInMeters lengthInYards qrCode",
+      },
+    });
+
+    // publish event
+    await new LotCreatedPublisher(natsWrapper.client).publish({
+      article: {
+        id: article.id,
+        name: article.name,
+      },
+      designs: lotDesigns,
+    });
 
     res.status(201).send(lot);
   }

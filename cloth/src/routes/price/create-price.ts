@@ -2,8 +2,11 @@ import express, { Request, Response } from "express";
 import { body } from "express-validator";
 
 // middlewares
-import { requireAuth, validateRequest } from "@fujingr/common";
-import { validateBodyObjectId } from "../../middlewares/validte-body-object-id";
+import {
+  requireAuth,
+  validateRequest,
+  validateBodyObjectId,
+} from "@fujingr/common";
 
 // constants
 import { Role } from "@fujingr/common";

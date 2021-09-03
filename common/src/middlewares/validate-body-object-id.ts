@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { Types } from "mongoose";
 
 // errors
-import { BadRequestError } from "@fujingr/common";
+import { BadRequestError } from "../errors/bad-request-error";
 
 export const validateBodyObjectId =
   (field: string) => (req: Request, res: Response, next: NextFunction) => {

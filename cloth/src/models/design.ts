@@ -1,10 +1,10 @@
-import { Schema, model, Types } from "mongoose";
+import { Schema, model, Types, PopulatedDoc, Document } from "mongoose";
 
 interface DesignAttrs {
   code: string;
   name: string;
   color: string;
-  items: Types.ObjectId[];
+  items: PopulatedDoc<Document>;
   lot: Types.ObjectId;
 }
 

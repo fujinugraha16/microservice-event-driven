@@ -18,6 +18,10 @@ import { NotFoundError } from "@fujingr/common";
 import { updateDesignsPayload } from "../../helpers/update-designs-payload";
 import { saveItems } from "../../helpers/save-items";
 
+// events
+import { natsWrapper } from "../../nats-wrapper";
+import { LotAddItemsPublisher } from "../../events/publisher/lot-add-items-event";
+
 const router = express.Router();
 
 router.put(
@@ -35,7 +39,7 @@ router.put(
     const { id } = req.params;
     const { designs } = req.body;
 
-    const lot = await Lot.findById(id);
+    const lot = await Lot.findById(id).populate("article");
     if (!lot) {
       throw new NotFoundError();
     }
@@ -51,6 +55,24 @@ router.put(
     // update inputSequence lot
     lot.set({ inputSequence });
     await lot.save();
+
+    const { designs: lotDesigns } = await lot.populate({
+      path: "designs",
+      select: "-_id name color items",
+      populate: {
+        path: "items",
+        select: "lengthInMeters lengthInYards qrCode",
+      },
+    });
+
+    // publish event
+    await new LotAddItemsPublisher(natsWrapper.client).publish({
+      article: {
+        id: lot.article.id,
+        name: lot.article.name,
+      },
+      designs: lotDesigns,
+    });
 
     res.status(200).send(lot);
   }

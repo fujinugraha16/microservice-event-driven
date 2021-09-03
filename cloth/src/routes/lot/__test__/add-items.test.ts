@@ -5,9 +5,8 @@ import { app } from "../../../app";
 import { Role, UserPayload } from "@fujingr/common";
 
 // helpers
-import { generateCookie, extractCookie } from "@fujingr/common";
+import { generateCookie, extractCookie, randomString } from "@fujingr/common";
 import { createLot, articleId, id } from "../../../helpers/lot-test";
-import { randomString } from "../../../helpers/random-string";
 import { createArticle } from "../../../helpers/article-test";
 
 // models

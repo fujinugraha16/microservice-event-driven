@@ -12,6 +12,10 @@ import { Article } from "../../models/article";
 // errors
 import { NotFoundError } from "@fujingr/common";
 
+// events
+import { natsWrapper } from "../../nats-wrapper";
+import { ArticleDeletedPublisher } from "../../events/publisher/article-deleted-event";
+
 const router = express.Router();
 
 router.delete(
@@ -27,6 +31,9 @@ router.delete(
     }
 
     await Article.findByIdAndRemove(id);
+
+    // publish event
+    await new ArticleDeletedPublisher(natsWrapper.client).publish({ id });
 
     res.status(204).send({ success: true });
   }

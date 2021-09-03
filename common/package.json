@@ -1,6 +1,6 @@
 {
   "name": "@fujingr/common",
-  "version": "1.0.10",
+  "version": "1.0.18",
   "description": "",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
@@ -23,7 +23,8 @@
     "express": "^4.17.1",
     "express-validator": "^6.12.1",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^6.0.4"
+    "mongoose": "^6.0.4",
+    "node-nats-streaming": "^0.3.2"
   },
   "devDependencies": {
     "del-cli": "^4.0.1",

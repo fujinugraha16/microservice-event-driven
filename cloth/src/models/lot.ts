@@ -1,10 +1,10 @@
-import { Schema, model, Types } from "mongoose";
+import { Schema, model, Types, PopulatedDoc, Document } from "mongoose";
 
 interface LotAttrs {
   code: string;
   pureLotCode: string;
-  article: Types.ObjectId;
-  designs: Types.ObjectId[];
+  article: PopulatedDoc<Document>;
+  designs: PopulatedDoc<Document>;
   supplier: string;
   price?: Types.ObjectId;
   inputSequence: number;

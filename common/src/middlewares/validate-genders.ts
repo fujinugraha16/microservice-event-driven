@@ -4,17 +4,14 @@ import { Request, Response, NextFunction } from "express";
 import { Gender } from "../constants/enum-gender";
 
 // errors
-import { BadRequestError } from "@fujingr/common";
-
-// models
-import { ArticleAttrs } from "../models/article";
+import { BadRequestError } from "../errors/bad-request-error";
 
 export const validateGenders = (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const { genders } = req.body as ArticleAttrs;
+  const { genders } = req.body as { genders: Gender[] };
 
   if (
     genders &&

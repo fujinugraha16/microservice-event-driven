@@ -13,6 +13,10 @@ import { NotFoundError } from "@fujingr/common";
 // helpers
 import { deleteDesignsAndItems } from "../../helpers/delete-designs-and-items";
 
+// events
+import { natsWrapper } from "../../nats-wrapper";
+import { LotDeletedPublisher } from "../../events/publisher/lot-deleted-event";
+
 const router = express.Router();
 
 router.delete(
@@ -32,6 +36,23 @@ router.delete(
 
     // delete lot
     await Lot.findByIdAndRemove(id);
+
+    const { designs: lotDesigns } = await lot.populate({
+      path: "designs",
+      select: "-_id name color items",
+      populate: {
+        path: "items",
+        select: "lengthInMeters lengthInYards qrCode",
+      },
+    });
+
+    // publish event
+    await new LotDeletedPublisher(natsWrapper.client).publish({
+      article: {
+        id: lot.article,
+      },
+      designs: lotDesigns,
+    });
 
     res.status(204).send({ success: true });
   }
