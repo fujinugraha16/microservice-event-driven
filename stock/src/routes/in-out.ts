@@ -30,4 +30,4 @@ router.get(
   }
 );
 
-export { router as showStockRouter };
+export { router as inOutStockRouter };

@@ -19,7 +19,7 @@ spec:
             - name: MONGO_URI
               value: "mongodb://cloth-mongo-clusterip-srv:27017/cloth"
             - name: NATS_CLUSTER_ID
-              value: "microservice-event-driven"
+              value: "event-driven"
             - name: NATS_CLIENT_ID
               valueFrom:
                 fieldRef:

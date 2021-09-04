@@ -36,7 +36,6 @@ const designSchema = new Schema<DesignAttrs>(
     },
   },
   {
-    timestamps: true,
     toJSON: {
       transform(doc, ret) {
         ret.id = ret._id;

@@ -1,4 +1,4 @@
-import { DesignPayloadEvent, ItemPayloadEvent } from "@fujingr/common";
+import { DesignPayloadEvent, ItemPayloadEvent } from "../events/lot/payload";
 
 export const parseDesignsToItemPayloads = (designs: DesignPayloadEvent[]) => {
   const itemPayloads: ItemPayloadEvent[] = [];

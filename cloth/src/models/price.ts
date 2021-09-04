@@ -29,7 +29,6 @@ const priceSchema = new Schema<PriceAttrs>(
     },
   },
   {
-    timestamps: true,
     toJSON: {
       transform(doc, ret) {
         ret.id = ret._id;

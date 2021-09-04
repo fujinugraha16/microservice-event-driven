@@ -70,7 +70,6 @@ const stockSchema = new Schema<StockAttrs>(
     ],
   },
   {
-    timestamps: true,
     toJSON: {
       transform(doc, ret) {
         ret.id = ret._id;

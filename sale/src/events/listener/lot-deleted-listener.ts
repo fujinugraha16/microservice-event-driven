@@ -4,8 +4,6 @@ import { queueGroupName } from "../../constants/queue-group-name";
 
 // helpers
 import { parseDesignsToItemPayloads } from "@fujingr/common";
-import { parseDesignsToStockPayloads } from "../../helpers/parse-designs-to-stock-payloads";
-import { decreaseStocks } from "../../helpers/decrease-stocks";
 import { clearItems } from "../../helpers/clear-items";
 
 export class LotDeletedListener extends Listener<LotDeletedEvent> {
@@ -13,10 +11,7 @@ export class LotDeletedListener extends Listener<LotDeletedEvent> {
   queueGroupName = queueGroupName;
 
   async onMessage(data: LotDeletedEvent["data"], msg: Message) {
-    const { article, designs } = data;
-
-    const stockPayloads = parseDesignsToStockPayloads(designs, article);
-    await decreaseStocks(stockPayloads);
+    const { designs } = data;
 
     const itemPayloads = parseDesignsToItemPayloads(designs);
     await clearItems(itemPayloads);

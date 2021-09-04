@@ -32,4 +32,4 @@ router.get(
   }
 );
 
-export { router as showStockRouter };
+export { router as detailStockRouter };
