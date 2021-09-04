@@ -7,15 +7,16 @@ import { DesignPayloadEvent, ItemPayloadEvent } from "@fujingr/common";
 import { Design } from "../models/design";
 import { Item } from "../models/item";
 
-export const getDesignsPayloadEvent = async (
-  designIds: string[] | Types.ObjectId[]
+export const parseLotDesigns = async (
+  designIds: string[] | Types.ObjectId[],
+  inputSequence?: number
 ): Promise<DesignPayloadEvent[]> => {
   const designPromises = designIds.map(async (designId) => {
     const designDoc = await Design.findById(designId).select(
       "-_id name color items"
     );
 
-    const itemPromises = await designDoc!.items.map(async (item) => {
+    const itemPromises = designDoc!.items.map(async (item) => {
       const itemDoc = await Item.findById(item).select(
         "lengthInMeters lengthInYards qrCode"
       );
@@ -30,10 +31,16 @@ export const getDesignsPayloadEvent = async (
       return updatedItem;
     });
 
+    const updatedItems = inputSequence
+      ? (await Promise.all(itemPromises)).filter((item) =>
+          item.qrCode.includes(`${designDoc!.code}-${inputSequence}`)
+        )
+      : await Promise.all(itemPromises);
+
     const updatedDesign: DesignPayloadEvent = {
       name: designDoc!.name,
       color: designDoc!.color,
-      items: await Promise.all(itemPromises),
+      items: updatedItems,
     };
 
     return updatedDesign;

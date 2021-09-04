@@ -21,7 +21,7 @@ import { Role } from "@fujingr/common";
 
 // events
 import { natsWrapper } from "../../nats-wrapper";
-import { ArticleUpdatedPublisher } from "../../events/publisher/article-updated-event";
+import { ArticleUpdatedPublisher } from "../../events/publisher/article-updated-publisher";
 
 const router = express.Router();
 

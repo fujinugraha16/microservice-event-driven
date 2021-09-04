@@ -17,11 +17,11 @@ import { NotFoundError } from "@fujingr/common";
 // helpers
 import { updateDesignsPayload } from "../../helpers/update-designs-payload";
 import { saveItems } from "../../helpers/save-items";
-import { getDesignsPayloadEvent } from "../../helpers/get-designs-payload-event";
+import { parseLotDesigns } from "../../helpers/parse-lot-designs";
 
 // events
 import { natsWrapper } from "../../nats-wrapper";
-import { LotAddItemsPublisher } from "../../events/publisher/lot-add-items-event";
+import { LotAddItemsPublisher } from "../../events/publisher/lot-add-items-publisher";
 
 const router = express.Router();
 
@@ -58,11 +58,14 @@ router.put(
     await lot.save();
 
     // publish event
-    const designsPayloadEvent = await getDesignsPayloadEvent(lot.designs);
+    const designsPayloadEvent = await parseLotDesigns(
+      lot.designs,
+      inputSequence
+    );
 
     await new LotAddItemsPublisher(natsWrapper.client).publish({
       article: {
-        id: lot.article.toString(),
+        id: (lot.article as unknown as { id: string }).id,
         name: (lot.article as unknown as { name: string }).name,
       },
       designs: designsPayloadEvent,

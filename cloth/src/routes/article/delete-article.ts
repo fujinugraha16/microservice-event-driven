@@ -8,13 +8,14 @@ import { Role } from "@fujingr/common";
 
 // models
 import { Article } from "../../models/article";
+import { Lot } from "../../models/lot";
 
 // errors
-import { NotFoundError } from "@fujingr/common";
+import { NotFoundError, ForbiddenError } from "@fujingr/common";
 
 // events
 import { natsWrapper } from "../../nats-wrapper";
-import { ArticleDeletedPublisher } from "../../events/publisher/article-deleted-event";
+import { ArticleDeletedPublisher } from "../../events/publisher/article-deleted-publisher";
 
 const router = express.Router();
 
@@ -28,6 +29,13 @@ router.delete(
     const article = await Article.findById(id);
     if (!article) {
       throw new NotFoundError();
+    }
+
+    const totalLotDocs = await Lot.find({
+      article: article.id,
+    }).countDocuments();
+    if (totalLotDocs > 0) {
+      throw new ForbiddenError("Article used by others");
     }
 
     await Article.findByIdAndRemove(id);

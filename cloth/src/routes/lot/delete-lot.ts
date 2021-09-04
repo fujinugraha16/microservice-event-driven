@@ -15,11 +15,11 @@ import { NotFoundError } from "@fujingr/common";
 
 // helpers
 import { deleteDesignsAndItems } from "../../helpers/delete-designs-and-items";
-import { getDesignsPayloadEvent } from "../../helpers/get-designs-payload-event";
+import { parseLotDesigns } from "../../helpers/parse-lot-designs";
 
 // events
 import { natsWrapper } from "../../nats-wrapper";
-import { LotDeletedPublisher } from "../../events/publisher/lot-deleted-event";
+import { LotDeletedPublisher } from "../../events/publisher/lot-deleted-publisher";
 
 const router = express.Router();
 
@@ -30,7 +30,7 @@ router.delete(
   async (req, res) => {
     const { id } = req.params;
 
-    const lot = await Lot.findById(id);
+    const lot = await Lot.findById(id).populate("article");
     if (!lot) {
       throw new NotFoundError();
     }
@@ -47,11 +47,12 @@ router.delete(
     await Lot.findByIdAndRemove(id);
 
     // publish event
-    const designsPayloadEvent = await getDesignsPayloadEvent(lot.designs);
+    const designsPayloadEvent = await parseLotDesigns(lot.designs);
 
     await new LotDeletedPublisher(natsWrapper.client).publish({
       article: {
-        id: lot.article.toString(),
+        id: (lot.article as unknown as { id: string }).id,
+        name: (lot.article as unknown as { name: string }).name,
       },
       designs: designsPayloadEvent,
     });

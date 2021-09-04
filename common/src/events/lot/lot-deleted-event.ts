@@ -6,6 +6,7 @@ export interface LotDeletedEvent {
   data: {
     article: {
       id: string;
+      name: string;
     };
     designs: DesignPayloadEvent[];
   };

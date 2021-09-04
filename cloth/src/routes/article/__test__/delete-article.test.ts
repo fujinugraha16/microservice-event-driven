@@ -10,6 +10,7 @@ import { Role, UserPayload } from "@fujingr/common";
 // helpers
 import { generateCookie, extractCookie } from "@fujingr/common";
 import { createArticle, id } from "../../../helpers/article-test";
+import { createLot } from "../../../helpers/lot-test";
 
 test("send 401 when not provide cookie", async () => {
   await request(app).delete(`/api/cloth/article/delete/${id}`).expect(401);
@@ -40,6 +41,15 @@ test("send 404 if article not found", async () => {
     .delete(`/api/cloth/article/delete/${id}`)
     .set("Cookie", generateCookie())
     .expect(404);
+});
+
+test("send 403 if article used by others", async () => {
+  await createLot(id);
+
+  await request(app)
+    .delete(`/api/cloth/article/delete/${id}`)
+    .set("Cookie", generateCookie())
+    .expect(403);
 });
 
 test("send 204 when delete successfully", async () => {
