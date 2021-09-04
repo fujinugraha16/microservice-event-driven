@@ -1,0 +1,35 @@
+import { Types } from "mongoose";
+
+// models
+import { Stock } from "../models/stock";
+
+// helpers
+import { randomString } from "@fujingr/common";
+
+// constants
+import { InOut } from "../constants/enum-in-out";
+
+export const createStock = async (article: string = articleId) => {
+  const stock = new Stock({
+    article,
+    name: "Test white",
+    color: "#fff",
+    totalQty: 100,
+    totalLengthInMeters: 910,
+    totalLengthInYards: 1000,
+    inOutStocks: [
+      {
+        qrCode: randomString(10),
+        info: InOut.IN,
+      },
+    ],
+    detailStocks: [new Types.ObjectId().toHexString()],
+  });
+  await stock.save();
+
+  return stock;
+};
+
+export const articleId = new Types.ObjectId().toHexString();
+
+export const id = new Types.ObjectId().toHexString();
