@@ -1,11 +1,13 @@
-import { Schema, model, Types, PopulatedDoc, Document } from "mongoose";
+import { Schema, model, Types } from "mongoose";
+
+type ID = Types.ObjectId;
 
 interface DesignAttrs {
   code: string;
   name: string;
   color: string;
-  items: PopulatedDoc<Document>;
-  lot: Types.ObjectId;
+  items: ID[];
+  lot: ID;
 }
 
 const designSchema = new Schema<DesignAttrs>(

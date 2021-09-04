@@ -1,4 +1,4 @@
-interface ItemPayloadEvent {
+export interface ItemPayloadEvent {
   id: string;
   qrCode: string;
   lengthInMeters: number;

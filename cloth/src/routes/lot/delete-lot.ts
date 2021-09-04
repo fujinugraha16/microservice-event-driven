@@ -5,13 +5,17 @@ import { requireAuth, validateParamId } from "@fujingr/common";
 
 // constants
 import { Role } from "@fujingr/common";
+
+// models
 import { Lot } from "../../models/lot";
+import { Price } from "../../models/price";
 
 // errors
 import { NotFoundError } from "@fujingr/common";
 
 // helpers
 import { deleteDesignsAndItems } from "../../helpers/delete-designs-and-items";
+import { getDesignsPayloadEvent } from "../../helpers/get-designs-payload-event";
 
 // events
 import { natsWrapper } from "../../nats-wrapper";
@@ -34,24 +38,22 @@ router.delete(
     // delete desings and items
     await deleteDesignsAndItems(lot.designs);
 
+    // delete price too
+    if (lot.price) {
+      await Price.findByIdAndRemove(lot.price);
+    }
+
     // delete lot
     await Lot.findByIdAndRemove(id);
 
-    const { designs: lotDesigns } = await lot.populate({
-      path: "designs",
-      select: "-_id name color items",
-      populate: {
-        path: "items",
-        select: "lengthInMeters lengthInYards qrCode",
-      },
-    });
-
     // publish event
+    const designsPayloadEvent = await getDesignsPayloadEvent(lot.designs);
+
     await new LotDeletedPublisher(natsWrapper.client).publish({
       article: {
-        id: lot.article,
+        id: lot.article.toString(),
       },
-      designs: lotDesigns,
+      designs: designsPayloadEvent,
     });
 
     res.status(204).send({ success: true });

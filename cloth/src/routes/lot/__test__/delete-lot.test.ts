@@ -13,6 +13,7 @@ import { createLot, id } from "../../../helpers/lot-test";
 import { Lot } from "../../../models/lot";
 import { Design } from "../../../models/design";
 import { Item } from "../../../models/item";
+import { Price } from "../../../models/price";
 
 test("send 401 when not provide cookie", async () => {
   await request(app).delete("/api/cloth/lot/delete/asdfas").expect(401);
@@ -97,4 +98,32 @@ test("successfully deleted lot", async () => {
 
   const checkLot = await Lot.findById(lot.id);
   expect(checkLot).toBeNull();
+});
+
+test("delete price too if lot have price", async () => {
+  const lotDoc = await createLot();
+
+  const [lot, retailPrice, wholesalerPrice, lotPrice] = [
+    lotDoc.id,
+    5000,
+    10000,
+    120000,
+  ];
+
+  const response = await request(app)
+    .post("/api/cloth/price/create")
+    .set("Cookie", generateCookie())
+    .send({ lot, retailPrice, wholesalerPrice, lotPrice })
+    .expect(201);
+
+  await request(app)
+    .delete(`/api/cloth/lot/delete/${lotDoc.id}`)
+    .set("Cookie", generateCookie())
+    .expect(204);
+
+  const checkLot = await Lot.findById(lotDoc.id);
+  expect(checkLot).toBeNull();
+
+  const checkPrice = await Price.findById(response.body.id);
+  expect(checkPrice).toBeNull();
 });

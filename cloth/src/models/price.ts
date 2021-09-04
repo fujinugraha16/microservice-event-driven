@@ -1,7 +1,9 @@
 import { Schema, model, Types } from "mongoose";
 
+type ID = Types.ObjectId;
+
 interface PriceAttrs {
-  lot: Types.ObjectId;
+  lot: ID;
   retailPrice: number;
   wholesalerPrice: number;
   lotPrice: number;
