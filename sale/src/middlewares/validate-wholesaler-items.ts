@@ -19,7 +19,7 @@ export const validateWholeSalerItems = (
   }
 
   if (
-    !["qrCode", "price", "lengthInMeters", "lengthInYards"].every((key) =>
+    !["qrCode", "price"].every((key) =>
       Object.keys(wholesalerItems[0]).includes(key)
     )
   ) {

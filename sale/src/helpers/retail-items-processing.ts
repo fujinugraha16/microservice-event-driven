@@ -4,6 +4,9 @@ import { RetailItemPayload } from "../constants/retail-item-payload";
 // models
 import { Item } from "../models/item";
 
+// events
+import { StockPayload } from "@fujingr/common";
+
 export const retailItemsProcessing = async (
   retailItems: RetailItemPayload[]
 ) => {
@@ -11,10 +14,11 @@ export const retailItemsProcessing = async (
   let totalPrice = 0;
   let totalQty = 0;
   const notFoundItemsQrCode: string[] = [];
+  const stockPayloads: StockPayload[] = [];
 
   const promises = retailItems.map(
     async ({ qrCode, price, lengthInMeters }) => {
-      // let stockQty = 0;
+      let qty = 0;
       tempPrice += price;
 
       const itemDoc = await Item.findOne({ qrCode });
@@ -30,7 +34,7 @@ export const retailItemsProcessing = async (
           });
           await itemDoc.save();
 
-          // stockQty = 1;
+          qty = 1;
         } else {
           itemDoc.set({
             lengthInMeters: totalLengthInMeters,
@@ -38,6 +42,13 @@ export const retailItemsProcessing = async (
           });
           await itemDoc.save();
         }
+
+        stockPayloads.push({
+          itemId: itemDoc.id.toString(),
+          lengthInMeters,
+          lengthInYards: lengthInMeters * 1.09,
+          qty,
+        });
       } else {
         notFoundItemsQrCode.push(qrCode);
       }
@@ -48,5 +59,5 @@ export const retailItemsProcessing = async (
   totalPrice += tempPrice;
   totalQty += retailItems.length;
 
-  return { totalPrice, totalQty, notFoundItemsQrCode };
+  return { totalPrice, totalQty, notFoundItemsQrCode, stockPayloads };
 };
