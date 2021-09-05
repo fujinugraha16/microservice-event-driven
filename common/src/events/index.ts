@@ -11,3 +11,6 @@ export * from "./lot/lot-add-items-event";
 export * from "./lot/lot-created-event";
 export * from "./lot/lot-deleted-event";
 export * from "./lot/payload";
+
+export * from "./sale/sale-created-event";
+export * from "./sale/payload";

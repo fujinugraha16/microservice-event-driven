@@ -6,4 +6,6 @@ export enum Subjects {
   LotCreated = "lot:created",
   LotAddItems = "lot:add-items",
   LotDeleted = "lot:deleted",
+
+  SaleCreated = "sale:created",
 }
