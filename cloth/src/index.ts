@@ -5,6 +5,9 @@ import { natsWrapper } from "./nats-wrapper";
 
 import { app } from "./app";
 
+// event
+import { SaleCreatedListener } from "./events/listener/sale-created-listener";
+
 const start = async () => {
   if (!process.env.MONGO_URI) {
     throw new Error("MONGO_URI must be defined");
@@ -37,6 +40,9 @@ const start = async () => {
 
     process.on("SIGINT", () => natsWrapper.client.close());
     process.on("SIGTERM", () => natsWrapper.client.close());
+
+    // events listener
+    new SaleCreatedListener(natsWrapper.client).listen();
 
     // mongoose
     await mongoose.connect(process.env.MONGO_URI);

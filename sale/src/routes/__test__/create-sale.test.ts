@@ -12,6 +12,9 @@ import { createItem } from "../../helpers/item-test";
 // import
 import { Item } from "../../models/item";
 
+// events
+import { natsWrapper } from "../../nats-wrapper";
+
 test("send 401 when not provide cookie", async () => {
   await request(app).post("/api/sale/create").send({}).expect(401);
 });
@@ -542,4 +545,52 @@ test("send 201 when successfully create sale", async () => {
   expect(response.body.code).toEqual(saleCode);
   expect(response.body.totalQty).toEqual(3);
   expect(response.body.totalPrice).toEqual(20_000 + 400_000 + 2_000_000);
+});
+
+test("emits an sale created event", async () => {
+  const item1 = await createItem();
+  const item2 = await createItem();
+  const item3 = await createItem();
+
+  const saleCode = `SL-${randomString(5)}`;
+
+  const [code, customerName] = [saleCode, "Test Customer"];
+  const [totalPrice, totalQty] = [1_000_000, 100];
+  const [retailItems, wholesalerItems, lotItems] = [
+    [
+      {
+        qrCode: item1.qrCode,
+        price: 20_000,
+        lengthInMeters: 10,
+      },
+    ],
+    [
+      {
+        qrCode: item2.qrCode,
+        price: 400_000,
+      },
+    ],
+    [
+      {
+        price: 2_000_000,
+        items: [item3.qrCode],
+      },
+    ],
+  ];
+
+  request(app)
+    .post("/api/sale/create")
+    .set("Cookie", generateCookie())
+    .send({
+      code,
+      customerName,
+      totalPrice,
+      totalQty,
+      retailItems,
+      wholesalerItems,
+      lotItems,
+    })
+    .expect(201);
+
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
 });

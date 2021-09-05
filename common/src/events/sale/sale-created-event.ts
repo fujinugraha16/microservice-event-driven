@@ -12,6 +12,6 @@ export interface SaleCreatedEvent {
     }[];
     wholesalerItems?: string[];
     lotItems?: string[];
-    stockPayloads: StockPayload[];
+    stockPayloads?: StockPayload[];
   };
 }
