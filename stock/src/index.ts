@@ -14,6 +14,8 @@ import { LotCreatedListener } from "./events/listener/lot-created-listener";
 import { LotAddItemsListener } from "./events/listener/lot-add-items-listener";
 import { LotDeletedListener } from "./events/listener/lot-deleted-listener";
 
+import { SaleCreatedListener } from "./events/listener/sale-created-listener";
+
 const start = async () => {
   if (!process.env.MONGO_URI) {
     throw new Error("MONGO_URI must be defined");
@@ -55,6 +57,8 @@ const start = async () => {
     new LotCreatedListener(natsWrapper.client).listen();
     new LotAddItemsListener(natsWrapper.client).listen();
     new LotDeletedListener(natsWrapper.client).listen();
+
+    new SaleCreatedListener(natsWrapper.client).listen();
 
     // mongoose
     await mongoose.connect(process.env.MONGO_URI);
