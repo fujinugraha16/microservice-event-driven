@@ -14,17 +14,25 @@ export class SaleCreatedListener extends Listener<SaleCreatedEvent> {
 
   async onMessage(data: SaleCreatedEvent["data"], msg: Message) {
     const { stockPayloads } = data;
+    const notFoundItemIdsWithVersion: string[] = [];
 
     if (stockPayloads) {
       const globalStocks: GlobalStockPayload[] = [];
 
       const promises = stockPayloads.map(
-        async ({ itemId, lengthInMeters, lengthInYards, qty }) => {
-          const { sold, qrCode } = await itemProcessing({
+        async ({ itemId, lengthInMeters, lengthInYards, qty, version }) => {
+          const {
+            sold,
+            qrCode,
+            notFoundItemIdsWithVersion: notFoundItems,
+          } = await itemProcessing({
             itemId,
             lengthInMeters,
             lengthInYards,
+            version,
           });
+
+          notFoundItemIdsWithVersion.push(...notFoundItems);
 
           const { globalStocks: gStocks } = await stockProcessing(
             { itemId, lengthInMeters, lengthInYards, qty },
@@ -62,6 +70,8 @@ export class SaleCreatedListener extends Listener<SaleCreatedEvent> {
       await globalStocksProcessing(updatedGlobalStockPayloads);
     }
 
-    msg.ack();
+    if (notFoundItemIdsWithVersion.length === 0) {
+      msg.ack();
+    }
   }
 }

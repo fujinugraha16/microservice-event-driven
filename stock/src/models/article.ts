@@ -1,4 +1,5 @@
 import { Schema, model } from "mongoose";
+import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 
 // constants
 import { TypeOfSale, Gender } from "@fujingr/common";
@@ -57,6 +58,10 @@ const articleSchema = new Schema<ArticleAttrs>(
     },
   }
 );
+
+// add for the occ
+articleSchema.set("versionKey", "version");
+articleSchema.plugin(updateIfCurrentPlugin);
 
 const articleModel = model<ArticleAttrs>("Article", articleSchema);
 

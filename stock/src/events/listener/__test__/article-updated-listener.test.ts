@@ -36,6 +36,27 @@ const setup = async () => {
     safetyStock: 30,
     typeOfSale: TypeOfSale.retail,
     width: 120,
+    version: 2,
+  };
+
+  const wrongData: ArticleUpdatedEvent["data"] = {
+    id: article.id,
+    gsm: 20,
+    name: "Test B",
+    safetyStock: 30,
+    typeOfSale: TypeOfSale.retail,
+    width: 120,
+    version: 3,
+  };
+
+  const unknowData: ArticleUpdatedEvent["data"] = {
+    id: new Types.ObjectId().toHexString(),
+    gsm: 20,
+    name: "Test B",
+    safetyStock: 30,
+    typeOfSale: TypeOfSale.retail,
+    width: 120,
+    version: 2,
   };
 
   // @ts-ignore
@@ -43,7 +64,7 @@ const setup = async () => {
     ack: jest.fn(),
   };
 
-  return { listener, article, data, msg };
+  return { listener, wrongData, unknowData, article, data, msg };
 };
 
 test("article successfully updated", async () => {
@@ -54,6 +75,22 @@ test("article successfully updated", async () => {
   const existingArticle = await Article.findById(article.id);
 
   expect(article.name).not.toEqual(existingArticle!.name);
+});
+
+test("wrong data version, cancel ack message", async () => {
+  const { listener, wrongData, msg } = await setup();
+
+  await listener.onMessage(wrongData, msg);
+
+  expect(msg.ack).not.toHaveBeenCalled();
+});
+
+test("maybe data has been deleted or not defined, ack the message", async () => {
+  const { listener, unknowData, msg } = await setup();
+
+  await listener.onMessage(unknowData, msg);
+
+  expect(msg.ack).not.toHaveBeenCalled();
 });
 
 test("acks the message", async () => {

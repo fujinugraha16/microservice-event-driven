@@ -4,13 +4,15 @@ interface ItemPayload {
   itemId: string;
   lengthInMeters: number;
   lengthInYards: number;
+  version: number;
 }
 
 export const itemProcessing = async (itemPayload: ItemPayload) => {
-  const { itemId, lengthInMeters, lengthInYards } = itemPayload;
+  const { itemId, lengthInMeters, lengthInYards, version } = itemPayload;
+  const notFoundItemIdsWithVersion: string[] = [];
   let sold = false;
 
-  const itemDoc = await Item.findById(itemId);
+  const itemDoc = await Item.findOne({ _id: itemId, version: version - 1 });
   if (itemDoc) {
     const totalLengthInMeters = itemDoc.lengthInMeters - lengthInMeters;
     const totalLengthInYards = itemDoc.lengthInYards - lengthInYards;
@@ -30,7 +32,21 @@ export const itemProcessing = async (itemPayload: ItemPayload) => {
       });
       await itemDoc.save();
     }
+  } else {
+    // item doc has been updated
+    const itemDocHasBeenUpdated = await Item.findOne({ _id: itemId, version });
+
+    // or maybe has been deleted
+    if (!itemDocHasBeenUpdated) {
+      const checkAvailabilityItem = await Item.findById(itemId);
+      if (checkAvailabilityItem) {
+        console.log(
+          `Item with id: '${itemId}' with version: ${version - 1} not found`
+        );
+        notFoundItemIdsWithVersion.push(itemId);
+      }
+    }
   }
 
-  return { sold, qrCode: itemDoc?.qrCode || null };
+  return { sold, qrCode: itemDoc?.qrCode || null, notFoundItemIdsWithVersion };
 };

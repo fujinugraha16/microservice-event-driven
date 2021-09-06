@@ -61,12 +61,52 @@ const setup = async () => {
         lengthInMeters: 40,
         lengthInYards: 40 * 1.09,
         qty: 1,
+        version: 2,
       },
       {
         itemId: item3.id,
         lengthInMeters: 40,
         lengthInYards: 40 * 1.09,
         qty: 1,
+        version: 2,
+      },
+    ],
+  };
+
+  const wrongData: SaleCreatedEvent["data"] = {
+    stockPayloads: [
+      {
+        itemId: item2.id,
+        lengthInMeters: 40,
+        lengthInYards: 40 * 1.09,
+        qty: 1,
+        version: 3,
+      },
+      {
+        itemId: item3.id,
+        lengthInMeters: 40,
+        lengthInYards: 40 * 1.09,
+        qty: 1,
+        version: 3,
+      },
+    ],
+  };
+
+  const unknowData: SaleCreatedEvent["data"] = {
+    stockPayloads: [
+      {
+        itemId: new Types.ObjectId().toHexString(),
+        lengthInMeters: 40,
+        lengthInYards: 40 * 1.09,
+        qty: 1,
+        version: 2,
+      },
+      {
+        itemId: new Types.ObjectId().toHexString(),
+        lengthInMeters: 40,
+        lengthInYards: 40 * 1.09,
+        qty: 1,
+        version: 2,
       },
     ],
   };
@@ -76,7 +116,7 @@ const setup = async () => {
     ack: jest.fn(),
   };
 
-  return { listener, stock, data, msg };
+  return { listener, stock, wrongData, unknowData, data, msg };
 };
 
 test("items sucessfully updated", async () => {
@@ -108,6 +148,22 @@ test("stocks successfully updated", async () => {
     stock.totalLengthInYards - 2 * 40 * 1.09
   );
   expect(existingStock!.totalQty).toEqual(1);
+});
+
+test("wrong data version, cancel ack message", async () => {
+  const { listener, wrongData, msg } = await setup();
+
+  await listener.onMessage(wrongData, msg);
+
+  expect(msg.ack).not.toHaveBeenCalled();
+});
+
+test("maybe data has been deleted or not defined, ack the message", async () => {
+  const { listener, unknowData, msg } = await setup();
+
+  await listener.onMessage(unknowData, msg);
+
+  expect(msg.ack).not.toHaveBeenCalled();
 });
 
 test("acks the message", async () => {
