@@ -86,6 +86,7 @@ router.put(
       activities: article.activities,
       genders: article.genders,
       detailReferences: article.detailReferences,
+      version: article.version!,
     });
 
     res.status(200).send(article);

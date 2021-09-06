@@ -5,7 +5,7 @@ import { RetailItemPayload } from "../constants/retail-item-payload";
 import { Item } from "../models/item";
 
 // events
-import { StockPayload } from "@fujingr/common";
+import { SaleCreatedEvent, StockPayload } from "@fujingr/common";
 
 export const retailItemsProcessing = async (
   retailItems: RetailItemPayload[]
@@ -15,6 +15,7 @@ export const retailItemsProcessing = async (
   let totalQty = 0;
   const notFoundItemsQrCode: string[] = [];
   const stockPayloads: StockPayload[] = [];
+  const updatedRetailItems: SaleCreatedEvent["data"]["retailItems"] = [];
 
   const promises = retailItems.map(
     async ({ qrCode, price, lengthInMeters }) => {
@@ -43,11 +44,19 @@ export const retailItemsProcessing = async (
           await itemDoc.save();
         }
 
+        updatedRetailItems.push({
+          qrCode,
+          lengthInMeters,
+          lengthInYards: lengthInMeters * 1.09,
+          version: itemDoc.version!,
+        });
+
         stockPayloads.push({
           itemId: itemDoc.id.toString(),
           lengthInMeters,
           lengthInYards: lengthInMeters * 1.09,
           qty,
+          version: itemDoc.version!,
         });
       } else {
         notFoundItemsQrCode.push(qrCode);
@@ -59,5 +68,11 @@ export const retailItemsProcessing = async (
   totalPrice += tempPrice;
   totalQty += retailItems.length;
 
-  return { totalPrice, totalQty, notFoundItemsQrCode, stockPayloads };
+  return {
+    totalPrice,
+    totalQty,
+    notFoundItemsQrCode,
+    stockPayloads,
+    updatedRetailItems,
+  };
 };

@@ -1,4 +1,5 @@
 import { Schema, model, Types } from "mongoose";
+import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 
 type ID = Types.ObjectId;
 
@@ -43,6 +44,10 @@ const itemSchema = new Schema<ItemAttrs>(
     },
   }
 );
+
+// add for the occ
+itemSchema.set("versionKey", "version");
+itemSchema.plugin(updateIfCurrentPlugin);
 
 const itemModel = model<ItemAttrs>("Item", itemSchema);
 

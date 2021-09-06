@@ -9,9 +9,16 @@ export interface SaleCreatedEvent {
       qrCode: string;
       lengthInMeters: number;
       lengthInYards: number;
+      version: number;
     }[];
-    wholesalerItems?: string[];
-    lotItems?: string[];
+    wholesalerItems?: {
+      qrCode: string;
+      version: number;
+    }[];
+    lotItems?: {
+      qrCode: string;
+      version: number;
+    }[];
     stockPayloads?: StockPayload[];
   };
 }

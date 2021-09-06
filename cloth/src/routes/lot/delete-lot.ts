@@ -11,7 +11,7 @@ import { Lot } from "../../models/lot";
 import { Price } from "../../models/price";
 
 // errors
-import { NotFoundError } from "@fujingr/common";
+import { NotFoundError, ForbiddenError } from "@fujingr/common";
 
 // helpers
 import { deleteDesignsAndItems } from "../../helpers/delete-designs-and-items";
@@ -33,6 +33,11 @@ router.delete(
     const lot = await Lot.findById(id).populate("article");
     if (!lot) {
       throw new NotFoundError();
+    }
+
+    // cannot deleted if inputSequence > 1
+    if (lot.inputSequence > 1) {
+      throw new ForbiddenError("Lot has been used by other documents");
     }
 
     // delete desings and items

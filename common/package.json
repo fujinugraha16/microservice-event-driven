@@ -1,6 +1,6 @@
 {
   "name": "@fujingr/common",
-  "version": "1.0.31",
+  "version": "1.0.35",
   "description": "",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",

@@ -2,7 +2,11 @@ import express, { Request, Response } from "express";
 import { body } from "express-validator";
 
 // middlewares
-import { requireAuth, validateRequest } from "@fujingr/common";
+import {
+  requireAuth,
+  SaleCreatedEvent,
+  validateRequest,
+} from "@fujingr/common";
 import { validateRetailItems } from "../middlewares/validate-retail-items";
 import { validateWholeSalerItems } from "../middlewares/validate-wholesaler-items";
 import { validateLotItems } from "../middlewares/validate-lot-items";
@@ -48,6 +52,9 @@ router.post(
       req.body as SaleAttrs;
     const notFoundItemsQrCode: string[] = [];
     const stockPayloads: StockPayload[] = [];
+    let updatedRetailItems: SaleCreatedEvent["data"]["retailItems"];
+    let updatedWholesalerItems: SaleCreatedEvent["data"]["wholesalerItems"];
+    let updatedLotItems: SaleCreatedEvent["data"]["lotItems"];
     let totalPrice = 0;
     let totalQty = 0;
 
@@ -63,6 +70,7 @@ router.post(
       totalQty += retailItemsPrx.totalQty;
       notFoundItemsQrCode.push(...retailItemsPrx.notFoundItemsQrCode);
       stockPayloads.push(...retailItemsPrx.stockPayloads);
+      updatedRetailItems = retailItemsPrx.updatedRetailItems;
     }
 
     if (wholesalerItems && wholesalerItems.length > 0) {
@@ -74,6 +82,7 @@ router.post(
       totalQty += wholesalerItemsPrx.totalQty;
       notFoundItemsQrCode.push(...wholesalerItemsPrx.notFoundItemsQrCode);
       stockPayloads.push(...wholesalerItemsPrx.stockPayloads);
+      updatedWholesalerItems = wholesalerItemsPrx.updatedWholesalerItems;
     }
 
     if (lotItems && lotItems.length > 0) {
@@ -83,6 +92,7 @@ router.post(
       totalQty += lotItemsPrx.totalQty;
       notFoundItemsQrCode.push(...lotItemsPrx.notFoundItemsQrCode);
       stockPayloads.push(...lotItemsPrx.stockPayloads);
+      updatedLotItems = lotItemsPrx.updatedLotItems;
     }
 
     const sale = new Sale({
@@ -98,19 +108,9 @@ router.post(
 
     // event publisher
     await new SaleCreatedPublisher(natsWrapper.client).publish({
-      retailItems: retailItems
-        ? retailItems.map(({ qrCode, lengthInMeters }) => ({
-            qrCode,
-            lengthInMeters,
-            lengthInYards: lengthInMeters * 1.09,
-          }))
-        : undefined,
-      wholesalerItems: wholesalerItems
-        ? wholesalerItems.map(({ qrCode }) => qrCode)
-        : undefined,
-      lotItems: lotItems
-        ? lotItems.map(({ items }) => items).flat()
-        : undefined,
+      retailItems: updatedRetailItems,
+      wholesalerItems: updatedWholesalerItems,
+      lotItems: updatedLotItems,
       stockPayloads,
     });
 

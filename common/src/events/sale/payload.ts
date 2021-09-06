@@ -3,4 +3,5 @@ export interface StockPayload {
   lengthInMeters: number;
   lengthInYards: number;
   qty: number;
+  version: number;
 }

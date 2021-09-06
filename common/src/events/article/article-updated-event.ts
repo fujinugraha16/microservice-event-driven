@@ -14,5 +14,6 @@ export interface ArticleUpdatedEvent {
     safetyStock: number;
     typeOfSale: TypeOfSale;
     detailReferences?: string[];
+    version: number;
   };
 }

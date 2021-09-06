@@ -30,10 +30,37 @@ const setup = async () => {
         qrCode: qrCode1,
         lengthInMeters: 10,
         lengthInYards: 10 * 1.09,
+        version: 2,
       },
     ],
-    wholesalerItems: [qrCode2],
-    lotItems: [qrCode3],
+    wholesalerItems: [{ qrCode: qrCode2, version: 2 }],
+    lotItems: [{ qrCode: qrCode3, version: 2 }],
+  };
+
+  const wrongData: SaleCreatedEvent["data"] = {
+    retailItems: [
+      {
+        qrCode: qrCode1,
+        lengthInMeters: 10,
+        lengthInYards: 10 * 1.09,
+        version: 3,
+      },
+    ],
+    wholesalerItems: [{ qrCode: qrCode2, version: 3 }],
+    lotItems: [{ qrCode: qrCode3, version: 3 }],
+  };
+
+  const unknowData: SaleCreatedEvent["data"] = {
+    retailItems: [
+      {
+        qrCode: randomString(5),
+        lengthInMeters: 10,
+        lengthInYards: 10 * 1.09,
+        version: 2,
+      },
+    ],
+    wholesalerItems: [{ qrCode: randomString(5), version: 2 }],
+    lotItems: [{ qrCode: randomString(5), version: 2 }],
   };
 
   // @ts-ignore
@@ -41,7 +68,7 @@ const setup = async () => {
     ack: jest.fn(),
   };
 
-  return { listener, data, msg };
+  return { listener, wrongData, unknowData, data, msg };
 };
 
 test("item successfully to updated", async () => {
@@ -63,6 +90,22 @@ test("item successfully to updated", async () => {
   expect(existingItem3!.lengthInMeters).toEqual(0);
   expect(existingItem3!.lengthInYards).toEqual(0);
   expect(existingItem3!.sold).toEqual(true);
+});
+
+test("wrong version of data, cancel ack message", async () => {
+  const { listener, wrongData, msg } = await setup();
+
+  await listener.onMessage(wrongData, msg);
+
+  expect(msg.ack).not.toHaveBeenCalled();
+});
+
+test("maybe data not defined or has been deleted, ack the message", async () => {
+  const { listener, unknowData, msg } = await setup();
+
+  await listener.onMessage(unknowData, msg);
+
+  expect(msg.ack).not.toHaveBeenCalled();
 });
 
 test("acks the message", async () => {

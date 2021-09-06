@@ -5,7 +5,7 @@ import { WholesalerItemPayload } from "../constants/wholesaler-item-payload";
 import { Item } from "../models/item";
 
 // events
-import { StockPayload } from "@fujingr/common";
+import { SaleCreatedEvent, StockPayload } from "@fujingr/common";
 
 export const wholesalerItemsProcessing = async (
   wholesalerItems: WholesalerItemPayload[]
@@ -15,24 +15,32 @@ export const wholesalerItemsProcessing = async (
   let totalQty = 0;
   const notFoundItemsQrCode: string[] = [];
   const stockPayloads: StockPayload[] = [];
+  const updatedWholesalerItems: SaleCreatedEvent["data"]["wholesalerItems"] =
+    [];
 
   const promises = wholesalerItems.map(async ({ qrCode, price }) => {
     tempPrice += price;
 
     const itemDoc = await Item.findOne({ qrCode });
     if (itemDoc) {
-      stockPayloads.push({
-        itemId: itemDoc.id.toString(),
-        lengthInMeters: itemDoc.lengthInMeters,
-        lengthInYards: itemDoc.lengthInYards,
-        qty: 1,
-      });
+      const lengthInMeters = itemDoc.lengthInMeters;
+      const lengthInYards = itemDoc.lengthInYards;
 
       itemDoc.set({
         lengthInMeters: 0,
         lengthInYards: 0,
       });
       await itemDoc.save();
+
+      updatedWholesalerItems.push({ qrCode, version: itemDoc.version! });
+
+      stockPayloads.push({
+        itemId: itemDoc.id.toString(),
+        lengthInMeters,
+        lengthInYards,
+        qty: 1,
+        version: itemDoc.version!,
+      });
     } else {
       notFoundItemsQrCode.push(qrCode);
     }
@@ -42,5 +50,11 @@ export const wholesalerItemsProcessing = async (
   totalPrice += tempPrice;
   totalQty += wholesalerItems.length;
 
-  return { totalPrice, totalQty, notFoundItemsQrCode, stockPayloads };
+  return {
+    totalPrice,
+    totalQty,
+    notFoundItemsQrCode,
+    stockPayloads,
+    updatedWholesalerItems,
+  };
 };

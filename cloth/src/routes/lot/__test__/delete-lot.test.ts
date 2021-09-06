@@ -7,7 +7,7 @@ import { Role, UserPayload } from "@fujingr/common";
 // helpers
 import { generateCookie, extractCookie, randomString } from "@fujingr/common";
 import { createArticle } from "../../../helpers/article-test";
-import { createLot, id } from "../../../helpers/lot-test";
+import { createLot, articleId, id } from "../../../helpers/lot-test";
 
 // models
 import { Lot } from "../../../models/lot";
@@ -44,6 +44,15 @@ test("send 404 if lot not found", async () => {
     .delete(`/api/cloth/lot/delete/${id}`)
     .set("Cookie", generateCookie())
     .expect(404);
+});
+
+test("send 403 if lot used by other documents", async () => {
+  const lot = await createLot(articleId, 2);
+
+  await request(app)
+    .delete(`/api/cloth/lot/delete/${lot.id}`)
+    .set("Cookie", generateCookie())
+    .expect(403);
 });
 
 test("designs and items has been deleted", async () => {

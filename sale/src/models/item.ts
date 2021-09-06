@@ -1,9 +1,11 @@
 import { Schema, model } from "mongoose";
+import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 
 interface ItemAttrs {
   qrCode: string;
   lengthInMeters: number;
   lengthInYards: number;
+  version?: number;
 }
 
 const itemSchema = new Schema<ItemAttrs>(
@@ -30,6 +32,10 @@ const itemSchema = new Schema<ItemAttrs>(
     },
   }
 );
+
+// add for the occ
+itemSchema.set("versionKey", "version");
+itemSchema.plugin(updateIfCurrentPlugin);
 
 const itemModel = model<ItemAttrs>("Item", itemSchema);
 

@@ -35,7 +35,7 @@ router.delete(
       article: article.id,
     }).countDocuments();
     if (totalLotDocs > 0) {
-      throw new ForbiddenError("Article used by others");
+      throw new ForbiddenError("Article has been used by other documents");
     }
 
     await Article.findByIdAndRemove(id);

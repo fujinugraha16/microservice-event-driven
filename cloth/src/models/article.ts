@@ -1,4 +1,5 @@
 import { Schema, model } from "mongoose";
+import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 
 // constants
 import { TypeOfSale, Gender } from "@fujingr/common";
@@ -14,6 +15,7 @@ interface ArticleAttrs {
   safetyStock: number;
   typeOfSale: TypeOfSale;
   detailReferences?: string[];
+  version?: number;
 }
 
 const articleSchema = new Schema<ArticleAttrs>(
@@ -56,6 +58,10 @@ const articleSchema = new Schema<ArticleAttrs>(
     },
   }
 );
+
+// add mongoose-update-if-current for optimistic concurrency control
+articleSchema.set("versionKey", "version");
+articleSchema.plugin(updateIfCurrentPlugin);
 
 const articleModel = model<ArticleAttrs>("Article", articleSchema);
 

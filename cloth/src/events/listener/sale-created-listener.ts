@@ -13,19 +13,31 @@ export class SaleCreatedListener extends Listener<SaleCreatedEvent> {
 
   async onMessage(data: SaleCreatedEvent["data"], msg: Message) {
     const { retailItems, wholesalerItems, lotItems } = data;
+    const notFoundQrCodeWithVersion: string[] = [];
 
     if (retailItems && retailItems.length > 0) {
-      await retailItemsProcessing(retailItems);
+      const retailItemsPrx = await retailItemsProcessing(retailItems);
+      notFoundQrCodeWithVersion.push(
+        ...retailItemsPrx.notFoundQrCodeWithVersion
+      );
     }
 
     if (wholesalerItems && wholesalerItems.length > 0) {
-      await wholesalerItemsProcessing(wholesalerItems);
+      const wholesalerItemsPrx = await wholesalerItemsProcessing(
+        wholesalerItems
+      );
+      notFoundQrCodeWithVersion.push(
+        ...wholesalerItemsPrx.notFoundQrCodeWithVersion
+      );
     }
 
     if (lotItems && lotItems.length > 0) {
-      await lotItemsProcessing(lotItems);
+      const lotItemsPrx = await lotItemsProcessing(lotItems);
+      notFoundQrCodeWithVersion.push(...lotItemsPrx.notFoundQrCodeWithVersion);
     }
 
-    msg.ack();
+    if (notFoundQrCodeWithVersion.length === 0) {
+      msg.ack();
+    }
   }
 }
