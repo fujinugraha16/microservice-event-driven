@@ -3,6 +3,7 @@ import { Message } from "node-nats-streaming";
 import { LotDeletedEvent } from "@fujingr/common";
 
 // events
+jest.mock("../../../nats-wrapper");
 import { natsWrapper } from "../../../nats-wrapper";
 import { LotDeletedListener } from "../lot-deleted-listener";
 
@@ -52,7 +53,7 @@ const setup = async () => {
     ack: jest.fn(),
   };
 
-  return { listener, item, stock, data, msg };
+  return { listener, item, data, msg };
 };
 
 test("item successfully deleted", async () => {
@@ -60,7 +61,7 @@ test("item successfully deleted", async () => {
 
   await listener.onMessage(data, msg);
 
-  const checkItem = await Item.findById(item.id);
+  const checkItem = await Item.findById(itemId);
   expect(checkItem).toBeNull();
 });
 

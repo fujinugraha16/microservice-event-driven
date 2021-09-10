@@ -43,9 +43,9 @@ test("send 200 when sale found", async () => {
   const sale = await createSale();
 
   const response = await request(app)
-    .get(`/api/sale/show/${id}`)
+    .get(`/api/sale/show/${sale.id.toString()}`)
     .set("Cookie", generateCookie())
-    .expect(404);
+    .expect(200);
 
   expect(response.body.id.toString()).toEqual(sale.id.toString());
   expect(response.body.totalQty).toEqual(sale.totalQty);

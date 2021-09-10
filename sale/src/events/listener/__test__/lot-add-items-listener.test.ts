@@ -3,6 +3,7 @@ import { Message } from "node-nats-streaming";
 import { LotAddItemsEvent } from "@fujingr/common";
 
 // events
+jest.mock("../../../nats-wrapper");
 import { natsWrapper } from "../../../nats-wrapper";
 import { LotAddItemsListener } from "../lot-add-items-listener";
 

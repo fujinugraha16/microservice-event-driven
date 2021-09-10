@@ -15,11 +15,11 @@ import { NotFoundError } from "@fujingr/common";
 const router = express.Router();
 
 router.get(
-  "/api/sale/show:id",
+  "/api/sale/show/:id",
   requireAuth([Role.admin, Role.employee]),
   validateParamId,
   async (req, res) => {
-    const { id } = req.body;
+    const { id } = req.params;
 
     const sale = await Sale.findById(id);
     if (!sale) {

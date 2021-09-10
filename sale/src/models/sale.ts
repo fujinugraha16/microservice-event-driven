@@ -48,14 +48,6 @@ const saleSchema = new Schema<SaleAttrs>(
           type: String,
           required: true,
         },
-        lengthInMeters: {
-          type: Number,
-          required: true,
-        },
-        lengthInYards: {
-          type: Number,
-          required: true,
-        },
         price: {
           type: Number,
           required: true,
@@ -68,22 +60,7 @@ const saleSchema = new Schema<SaleAttrs>(
           type: Number,
           required: true,
         },
-        items: [
-          {
-            qrCode: {
-              type: String,
-              required: true,
-            },
-            lengthInMeters: {
-              type: Number,
-              required: true,
-            },
-            lengthInYards: {
-              type: Number,
-              required: true,
-            },
-          },
-        ],
+        items: [String],
       },
     ],
     totalPrice: {

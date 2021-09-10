@@ -13,6 +13,7 @@ import { createItem } from "../../helpers/item-test";
 import { Item } from "../../models/item";
 
 // events
+jest.mock("../../nats-wrapper");
 import { natsWrapper } from "../../nats-wrapper";
 
 test("send 401 when not provide cookie", async () => {
@@ -492,9 +493,9 @@ test("send 201 and response notFoundItemsQrCode if provided", async () => {
   expect(Object.keys(response.body).includes("notFoundItemsQrCode")).toEqual(
     true
   );
-  expect(response.body.notFoundItems[0]).toEqual(qrCode1);
-  expect(response.body.notFoundItems[1]).toEqual(qrCode2);
-  expect(response.body.notFoundItems[2]).toEqual(qrCode3);
+  expect(response.body.notFoundItemsQrCode[0]).toEqual(qrCode1);
+  expect(response.body.notFoundItemsQrCode[1]).toEqual(qrCode2);
+  expect(response.body.notFoundItemsQrCode[2]).toEqual(qrCode3);
 });
 
 test("send 201 when successfully create sale", async () => {
