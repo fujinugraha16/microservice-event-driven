@@ -6,6 +6,7 @@ import { LotDeletedEvent } from "@fujingr/common";
 import { InOut } from "../../../constants/enum-in-out";
 
 // events
+jest.mock("../../../nats-wrapper");
 import { natsWrapper } from "../../../nats-wrapper";
 import { LotDeletedListener } from "../lot-deleted-listener";
 
@@ -93,7 +94,7 @@ test("item successfully deleted", async () => {
 
   await listener.onMessage(data, msg);
 
-  const checkItem = await Item.findById(item.id);
+  const checkItem = await Item.findById(itemId);
   expect(checkItem).toBeNull();
 });
 

@@ -3,6 +3,7 @@ import { Message } from "node-nats-streaming";
 import { SaleCreatedEvent } from "@fujingr/common";
 
 // events
+jest.mock("../../../nats-wrapper");
 import { natsWrapper } from "../../../nats-wrapper";
 import { SaleCreatedListener } from "../sale-created-listener";
 
@@ -61,14 +62,14 @@ const setup = async () => {
         lengthInMeters: 40,
         lengthInYards: 40 * 1.09,
         qty: 1,
-        version: 2,
+        version: 1,
       },
       {
         itemId: item3.id,
         lengthInMeters: 40,
         lengthInYards: 40 * 1.09,
         qty: 1,
-        version: 2,
+        version: 1,
       },
     ],
   };
@@ -80,14 +81,14 @@ const setup = async () => {
         lengthInMeters: 40,
         lengthInYards: 40 * 1.09,
         qty: 1,
-        version: 3,
+        version: 2,
       },
       {
         itemId: item3.id,
         lengthInMeters: 40,
         lengthInYards: 40 * 1.09,
         qty: 1,
-        version: 3,
+        version: 2,
       },
     ],
   };
@@ -99,14 +100,14 @@ const setup = async () => {
         lengthInMeters: 40,
         lengthInYards: 40 * 1.09,
         qty: 1,
-        version: 2,
+        version: 1,
       },
       {
         itemId: new Types.ObjectId().toHexString(),
         lengthInMeters: 40,
         lengthInYards: 40 * 1.09,
         qty: 1,
-        version: 2,
+        version: 1,
       },
     ],
   };
@@ -147,7 +148,7 @@ test("stocks successfully updated", async () => {
   expect(existingStock!.totalLengthInYards).toEqual(
     stock.totalLengthInYards - 2 * 40 * 1.09
   );
-  expect(existingStock!.totalQty).toEqual(1);
+  expect(existingStock!.totalQty).toEqual(100 - 2);
 });
 
 test("wrong data version, cancel ack message", async () => {
@@ -163,7 +164,7 @@ test("maybe data has been deleted or not defined, ack the message", async () => 
 
   await listener.onMessage(unknowData, msg);
 
-  expect(msg.ack).not.toHaveBeenCalled();
+  expect(msg.ack).toHaveBeenCalled();
 });
 
 test("acks the message", async () => {

@@ -9,6 +9,7 @@ import { TypeOfSale } from "@fujingr/common";
 import { randomString } from "@fujingr/common";
 
 // events
+jest.mock("../../../nats-wrapper");
 import { natsWrapper } from "../../../nats-wrapper";
 import { ArticleUpdatedListener } from "../article-updated-listener";
 
@@ -36,7 +37,7 @@ const setup = async () => {
     safetyStock: 30,
     typeOfSale: TypeOfSale.retail,
     width: 120,
-    version: 2,
+    version: 1,
   };
 
   const wrongData: ArticleUpdatedEvent["data"] = {
@@ -46,7 +47,7 @@ const setup = async () => {
     safetyStock: 30,
     typeOfSale: TypeOfSale.retail,
     width: 120,
-    version: 3,
+    version: 2,
   };
 
   const unknowData: ArticleUpdatedEvent["data"] = {
@@ -56,7 +57,7 @@ const setup = async () => {
     safetyStock: 30,
     typeOfSale: TypeOfSale.retail,
     width: 120,
-    version: 2,
+    version: 1,
   };
 
   // @ts-ignore
@@ -90,7 +91,7 @@ test("maybe data has been deleted or not defined, ack the message", async () => 
 
   await listener.onMessage(unknowData, msg);
 
-  expect(msg.ack).not.toHaveBeenCalled();
+  expect(msg.ack).toHaveBeenCalled();
 });
 
 test("acks the message", async () => {

@@ -47,7 +47,7 @@ test("send 200 when stock found", async () => {
     .set("Cookie", generateCookie())
     .expect(200);
 
-  expect(response.body.articleId.toString()).toEqual(articleId.toString());
+  expect(response.body.article.toString()).toEqual(articleId.toString());
   expect(response.body.color).toEqual(stock.color);
   expect(response.body.totalQty).toEqual(stock.totalQty);
   expect(response.body.totalLengthInMeters).toEqual(stock.totalLengthInMeters);

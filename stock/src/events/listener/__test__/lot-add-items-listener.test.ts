@@ -6,6 +6,7 @@ import { LotAddItemsEvent } from "@fujingr/common";
 import { InOut } from "../../../constants/enum-in-out";
 
 // events
+jest.mock("../../../nats-wrapper");
 import { natsWrapper } from "../../../nats-wrapper";
 import { LotAddItemsListener } from "../lot-add-items-listener";
 

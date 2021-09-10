@@ -9,7 +9,10 @@ import { randomString } from "@fujingr/common";
 // constants
 import { InOut } from "../constants/enum-in-out";
 
-export const createStock = async (article: string = articleId) => {
+export const createStock = async (
+  article: string = articleId,
+  itemId?: string | Types.ObjectId
+) => {
   const stock = new Stock({
     article,
     name: "Test white",
@@ -23,7 +26,7 @@ export const createStock = async (article: string = articleId) => {
         info: InOut.IN,
       },
     ],
-    detailStocks: [new Types.ObjectId().toHexString()],
+    detailStocks: [itemId || new Types.ObjectId().toHexString()],
   });
   await stock.save();
 

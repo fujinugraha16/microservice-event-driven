@@ -9,6 +9,7 @@ import { TypeOfSale } from "@fujingr/common";
 import { randomString } from "@fujingr/common";
 
 // events
+jest.mock("../../../nats-wrapper");
 import { natsWrapper } from "../../../nats-wrapper";
 import { ArticleCreatedListener } from "../article-created-listener";
 

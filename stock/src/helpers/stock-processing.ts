@@ -31,10 +31,9 @@ export const stockProcessing = async (
         ? stock.detailStocks.filter((item) => item.toString() !== itemId)
         : stock.detailStocks;
 
-      stock.set({
-        inOutStocks: [...stock.inOutStocks, { qrCode, info: InOut.OUT }],
-        detailStocks,
-      });
+      stock.inOutStocks.push({ qrCode, info: InOut.OUT });
+      stock.detailStocks.push(...detailStocks);
+
       await stock.save();
 
       globalStocks.push({
