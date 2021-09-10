@@ -32,7 +32,7 @@ export const stockProcessing = async (
         : stock.detailStocks;
 
       stock.inOutStocks.push({ qrCode, info: InOut.OUT });
-      stock.detailStocks.push(...detailStocks);
+      stock.detailStocks = detailStocks;
 
       await stock.save();
 
