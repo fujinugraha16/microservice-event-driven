@@ -8,6 +8,10 @@ import { Role, UserPayload, TypeOfSale } from "@fujingr/common";
 import { generateCookie, extractCookie } from "@fujingr/common";
 import { createArticle } from "../../../helpers/article-test";
 
+// events
+jest.mock("../../../nats-wrapper");
+import { natsWrapper } from "../../../nats-wrapper";
+
 test("send 401 when not provide cookie", async () => {
   await request(app).post("/api/cloth/article/create").send({}).expect(401);
 });
@@ -179,4 +183,24 @@ test("send 201 when create article successfully", async () => {
   expect(response.body.width).toEqual(width);
   expect(response.body.gsm).toEqual(gsm);
   expect(response.body.safetyStock).toEqual(safetyStock);
+});
+
+test("article created publisher have been called", async () => {
+  const [code, name, typeOfSale] = ["DFAS", "Test", TypeOfSale.retail];
+  const [width, gsm, safetyStock] = [100, 10, 20];
+
+  const response = await request(app)
+    .post("/api/cloth/article/create")
+    .set("Cookie", generateCookie())
+    .send({
+      code,
+      name,
+      typeOfSale,
+      width,
+      gsm,
+      safetyStock,
+    })
+    .expect(201);
+
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
 });

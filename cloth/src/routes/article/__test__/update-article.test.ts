@@ -8,6 +8,10 @@ import { Role, UserPayload, TypeOfSale } from "@fujingr/common";
 import { extractCookie, generateCookie } from "@fujingr/common";
 import { createArticle, id } from "../../../helpers/article-test";
 
+// events
+jest.mock("../../../nats-wrapper");
+import { natsWrapper } from "../../../nats-wrapper";
+
 test("send 401 when unauthorized", async () => {
   await request(app)
     .put(`/api/cloth/article/update/${id}`)
@@ -145,4 +149,19 @@ test("send 200 when update article successfully", async () => {
   expect(response.body.width).toEqual(width);
   expect(response.body.gsm).toEqual(gsm);
   expect(response.body.safetyStock).toEqual(safetyStock);
+});
+
+test("article updated publisher have been called", async () => {
+  const article = await createArticle();
+
+  const [name, typeOfSale] = ["Test", TypeOfSale.retail];
+  const [width, gsm, safetyStock] = [100, 10, 20];
+
+  const response = await request(app)
+    .put(`/api/cloth/article/update/${article.id}`)
+    .set("Cookie", generateCookie())
+    .send({ name, typeOfSale, width, gsm, safetyStock })
+    .expect(200);
+
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
 });

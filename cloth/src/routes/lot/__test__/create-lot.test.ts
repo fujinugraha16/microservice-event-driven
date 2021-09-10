@@ -14,6 +14,10 @@ import { Lot } from "../../../models/lot";
 import { Design } from "../../../models/design";
 import { Item } from "../../../models/item";
 
+// events
+jest.mock("../../../nats-wrapper");
+import { natsWrapper } from "../../../nats-wrapper";
+
 test("send 401 when not provide cookie", async () => {
   await request(app).post("/api/cloth/lot/create").send({}).expect(401);
 });
@@ -285,4 +289,30 @@ test("successfully create items data", async () => {
   const totalItemDocs = await Item.find().countDocuments();
 
   expect(totalItemDocs).toEqual(6);
+});
+
+test("lot created publisher called", async () => {
+  const articleDoc = await createArticle();
+
+  const [pureLotCode, article, supplier] = [
+    randomString(5),
+    articleDoc.id,
+    "PT. Aliex Retail",
+  ];
+  const designs = [
+    {
+      code: "123",
+      name: "test",
+      color: "#fff",
+      items: [{ length: 10, qty: 2 }],
+    },
+  ];
+
+  await request(app)
+    .post("/api/cloth/lot/create")
+    .set("Cookie", generateCookie())
+    .send({ pureLotCode, article, supplier, designs })
+    .expect(201);
+
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
 });

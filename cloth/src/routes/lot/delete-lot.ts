@@ -40,6 +40,9 @@ router.delete(
       throw new ForbiddenError("Lot has been used by other documents");
     }
 
+    // data for publish
+    const designsPayloadEvent = await parseLotDesigns(lot.designs);
+
     // delete desings and items
     await deleteDesignsAndItems(lot.designs);
 
@@ -52,8 +55,6 @@ router.delete(
     await Lot.findByIdAndRemove(id);
 
     // publish event
-    const designsPayloadEvent = await parseLotDesigns(lot.designs);
-
     await new LotDeletedPublisher(natsWrapper.client).publish({
       article: {
         id: (lot.article as unknown as { id: string }).id,

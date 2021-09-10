@@ -12,6 +12,10 @@ import { generateCookie, extractCookie } from "@fujingr/common";
 import { createArticle, id } from "../../../helpers/article-test";
 import { createLot } from "../../../helpers/lot-test";
 
+// events
+jest.mock("../../../nats-wrapper");
+import { natsWrapper } from "../../../nats-wrapper";
+
 test("send 401 when not provide cookie", async () => {
   await request(app).delete(`/api/cloth/article/delete/${id}`).expect(401);
 });
@@ -44,10 +48,11 @@ test("send 404 if article not found", async () => {
 });
 
 test("send 403 if article used by others", async () => {
-  await createLot(id);
+  const article = await createArticle();
+  await createLot(article.id);
 
   await request(app)
-    .delete(`/api/cloth/article/delete/${id}`)
+    .delete(`/api/cloth/article/delete/${article.id}`)
     .set("Cookie", generateCookie())
     .expect(403);
 });
@@ -63,4 +68,15 @@ test("send 204 when delete successfully", async () => {
   const checkArticle = await Article.findById(article.id);
 
   expect(checkArticle).toBeNull();
+});
+
+test("article deleted publisher have been called", async () => {
+  const article = await createArticle();
+
+  await request(app)
+    .delete(`/api/cloth/article/delete/${article.id}`)
+    .set("Cookie", generateCookie())
+    .expect(204);
+
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
 });

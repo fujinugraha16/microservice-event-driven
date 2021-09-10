@@ -1,8 +1,8 @@
-import { Types } from "mongoose";
 import { Message } from "node-nats-streaming";
 import { SaleCreatedEvent } from "@fujingr/common";
 
 // events
+jest.mock("../../../nats-wrapper");
 import { natsWrapper } from "../../../nats-wrapper";
 import { SaleCreatedListener } from "../sale-created-listener";
 
@@ -22,9 +22,22 @@ const setup = async () => {
 
   await createItem(qrCode1);
   await createItem(qrCode2);
-  await createItem(qrCode2);
+  await createItem(qrCode3);
 
   const data: SaleCreatedEvent["data"] = {
+    retailItems: [
+      {
+        qrCode: qrCode1,
+        lengthInMeters: 10,
+        lengthInYards: 10 * 1.09,
+        version: 1,
+      },
+    ],
+    wholesalerItems: [{ qrCode: qrCode2, version: 1 }],
+    lotItems: [{ qrCode: qrCode3, version: 1 }],
+  };
+
+  const wrongData: SaleCreatedEvent["data"] = {
     retailItems: [
       {
         qrCode: qrCode1,
@@ -37,30 +50,17 @@ const setup = async () => {
     lotItems: [{ qrCode: qrCode3, version: 2 }],
   };
 
-  const wrongData: SaleCreatedEvent["data"] = {
-    retailItems: [
-      {
-        qrCode: qrCode1,
-        lengthInMeters: 10,
-        lengthInYards: 10 * 1.09,
-        version: 3,
-      },
-    ],
-    wholesalerItems: [{ qrCode: qrCode2, version: 3 }],
-    lotItems: [{ qrCode: qrCode3, version: 3 }],
-  };
-
   const unknowData: SaleCreatedEvent["data"] = {
     retailItems: [
       {
         qrCode: randomString(5),
         lengthInMeters: 10,
         lengthInYards: 10 * 1.09,
-        version: 2,
+        version: 1,
       },
     ],
-    wholesalerItems: [{ qrCode: randomString(5), version: 2 }],
-    lotItems: [{ qrCode: randomString(5), version: 2 }],
+    wholesalerItems: [{ qrCode: randomString(5), version: 1 }],
+    lotItems: [{ qrCode: randomString(5), version: 1 }],
   };
 
   // @ts-ignore
@@ -81,7 +81,7 @@ test("item successfully to updated", async () => {
   const existingItem3 = await Item.findOne({ qrCode: qrCode3 });
 
   expect(existingItem1!.lengthInMeters).toEqual(40 - 10);
-  expect(existingItem1!.lengthInYards).toEqual(40 - 10 * 1.09);
+  expect(existingItem1!.lengthInYards).toEqual((40 - 10) * 1.09);
 
   expect(existingItem2!.lengthInMeters).toEqual(0);
   expect(existingItem2!.lengthInYards).toEqual(0);
@@ -105,7 +105,7 @@ test("maybe data not defined or has been deleted, ack the message", async () => 
 
   await listener.onMessage(unknowData, msg);
 
-  expect(msg.ack).not.toHaveBeenCalled();
+  expect(msg.ack).toHaveBeenCalled();
 });
 
 test("acks the message", async () => {

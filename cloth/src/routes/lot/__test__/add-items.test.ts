@@ -13,6 +13,10 @@ import { createArticle } from "../../../helpers/article-test";
 import { Item } from "../../../models/item";
 import { Lot } from "../../../models/lot";
 
+// events
+jest.mock("../../../nats-wrapper");
+import { natsWrapper } from "../../../nats-wrapper";
+
 test("send 401 when not provide cookie", async () => {
   await request(app)
     .put("/api/cloth/lot/asdfas/add-items")
@@ -180,9 +184,29 @@ test("items successfully added", async () => {
 });
 
 test("lot inputSequence has been updated", async () => {
-  const lot = await createLot();
+  const articleDoc = await createArticle();
 
-  const designs = [
+  const [pureLotCode, article, supplier] = [
+    randomString(5),
+    articleDoc.id,
+    "PT. Aliex Retail",
+  ];
+  let designs = [
+    {
+      code: "123",
+      name: "test 1",
+      color: "#000",
+      items: [{ length: 40, qty: 1 }],
+    },
+  ];
+
+  const response = await request(app)
+    .post("/api/cloth/lot/create")
+    .set("Cookie", generateCookie())
+    .send({ pureLotCode, article, supplier, designs })
+    .expect(201);
+
+  designs = [
     {
       code: "123",
       name: "test 1",
@@ -192,11 +216,11 @@ test("lot inputSequence has been updated", async () => {
   ];
 
   await request(app)
-    .put(`/api/cloth/lot/${lot.id}/add-items`)
+    .put(`/api/cloth/lot/${response.body.id}/add-items`)
     .set("Cookie", generateCookie())
     .send({ designs });
 
-  const existingLot = await Lot.findOne({ article: articleId }).select(
+  const existingLot = await Lot.findById(response.body.id).select(
     "inputSequence"
   );
 
@@ -204,9 +228,29 @@ test("lot inputSequence has been updated", async () => {
 });
 
 test("send 200 when successfully add items to lot", async () => {
-  const lot = await createLot();
+  const articleDoc = await createArticle();
 
-  const designs = [
+  const [pureLotCode, article, supplier] = [
+    randomString(5),
+    articleDoc.id,
+    "PT. Aliex Retail",
+  ];
+  let designs = [
+    {
+      code: "123",
+      name: "test 1",
+      color: "#000",
+      items: [{ length: 40, qty: 1 }],
+    },
+  ];
+
+  const response = await request(app)
+    .post("/api/cloth/lot/create")
+    .set("Cookie", generateCookie())
+    .send({ pureLotCode, article, supplier, designs })
+    .expect(201);
+
+  designs = [
     {
       code: "123",
       name: "test 1",
@@ -216,8 +260,49 @@ test("send 200 when successfully add items to lot", async () => {
   ];
 
   await request(app)
-    .put(`/api/cloth/lot/${lot.id}/add-items`)
+    .put(`/api/cloth/lot/${response.body.id}/add-items`)
     .set("Cookie", generateCookie())
     .send({ designs })
     .expect(200);
+});
+
+test("lot add items publisher have been called", async () => {
+  const articleDoc = await createArticle();
+
+  const [pureLotCode, article, supplier] = [
+    randomString(5),
+    articleDoc.id,
+    "PT. Aliex Retail",
+  ];
+  let designs = [
+    {
+      code: "123",
+      name: "test 1",
+      color: "#000",
+      items: [{ length: 40, qty: 1 }],
+    },
+  ];
+
+  const response = await request(app)
+    .post("/api/cloth/lot/create")
+    .set("Cookie", generateCookie())
+    .send({ pureLotCode, article, supplier, designs })
+    .expect(201);
+
+  designs = [
+    {
+      code: "123",
+      name: "test 1",
+      color: "#000",
+      items: [{ length: 40, qty: 1 }],
+    },
+  ];
+
+  await request(app)
+    .put(`/api/cloth/lot/${response.body.id}/add-items`)
+    .set("Cookie", generateCookie())
+    .send({ designs })
+    .expect(200);
+
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
 });
