@@ -6,6 +6,9 @@ import { natsWrapper } from "./nats-wrapper";
 import { app } from "./app";
 
 // events
+import { LotAddItemsListener } from "./events/listener/lot-add-items-listener";
+import { LotCreatedListener } from "./events/listener/lot-created-listener";
+import { LotDeletedListener } from "./events/listener/lot-deleted-listener";
 
 const start = async () => {
   if (!process.env.MONGO_URI) {
@@ -41,6 +44,9 @@ const start = async () => {
     process.on("SIGTERM", () => natsWrapper.client.close());
 
     // events listener
+    new LotAddItemsListener(natsWrapper.client).listen();
+    new LotCreatedListener(natsWrapper.client).listen();
+    new LotDeletedListener(natsWrapper.client).listen();
 
     // mongoose
     await mongoose.connect(process.env.MONGO_URI);
