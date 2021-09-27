@@ -10,7 +10,7 @@ export const validateWholeSalerItems = (
 ) => {
   const { wholesalerItems } = req.body;
 
-  if (wholesalerItems && wholesalerItems.length > 0) {
+  if (!wholesalerItems || wholesalerItems.length === 0) {
     return next();
   }
 

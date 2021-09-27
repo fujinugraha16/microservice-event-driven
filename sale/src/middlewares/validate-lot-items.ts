@@ -10,7 +10,7 @@ export const validateLotItems = (
 ) => {
   const { lotItems } = req.body;
 
-  if (lotItems && lotItems.length > 0) {
+  if (!lotItems || lotItems.length === 0) {
     return next();
   }
 

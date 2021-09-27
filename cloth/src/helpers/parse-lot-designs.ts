@@ -13,7 +13,7 @@ export const parseLotDesigns = async (
 ): Promise<DesignPayloadEvent[]> => {
   const designPromises = designIds.map(async (designId) => {
     const designDoc = await Design.findById(designId).select(
-      "-_id name color items"
+      "code name color items"
     );
 
     const itemPromises = designDoc!.items.map(async (item) => {

@@ -40,7 +40,7 @@ router.put(
     const { id } = req.params;
     const { designs } = req.body;
 
-    const lot = await Lot.findById(id).populate("article");
+    const lot = await Lot.findById(id).populate("article", "name");
     if (!lot) {
       throw new NotFoundError();
     }

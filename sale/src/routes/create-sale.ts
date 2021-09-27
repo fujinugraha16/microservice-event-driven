@@ -38,11 +38,6 @@ router.post(
     .optional()
     .isArray()
     .withMessage("Must be array"),
-  body(["totalPrice", "totalQty"])
-    .isInt({ gt: 0 })
-    .withMessage("Must be numeric and greater than 0")
-    .notEmpty()
-    .withMessage("Must be filled"),
   validateRequest,
   validateRetailItems,
   validateWholeSalerItems,

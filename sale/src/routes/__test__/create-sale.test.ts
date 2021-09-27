@@ -44,7 +44,6 @@ test("bad request when fields not filled", async () => {
 
 test("bad request when field array not filled with array", async () => {
   const [code, customerName] = [`SL-${randomString(5)}`, "Test Customer"];
-  const [totalPrice, totalQty] = [1_000_000, 100];
   const [retailItems, wholesalerItems, lotItems] = ["test", "test", "test"];
 
   await request(app)
@@ -53,8 +52,6 @@ test("bad request when field array not filled with array", async () => {
     .send({
       code,
       customerName,
-      totalPrice,
-      totalQty,
       retailItems,
       wholesalerItems,
       lotItems,
@@ -64,7 +61,6 @@ test("bad request when field array not filled with array", async () => {
 
 test("bad request when field numeric not filled with numeric or less than 0", async () => {
   const [code, customerName] = [`SL-${randomString(5)}`, "Test Customer"];
-  const [totalPrice, totalQty] = ["1_000_000", -100];
   const [retailItems, wholesalerItems, lotItems] = ["test", "test", "test"];
 
   await request(app)
@@ -73,8 +69,6 @@ test("bad request when field numeric not filled with numeric or less than 0", as
     .send({
       code,
       customerName,
-      totalPrice,
-      totalQty,
       retailItems,
       wholesalerItems,
       lotItems,
@@ -84,7 +78,6 @@ test("bad request when field numeric not filled with numeric or less than 0", as
 
 test("bad request when field 'retailItems' filled array string", async () => {
   const [code, customerName] = [`SL-${randomString(5)}`, "Test Customer"];
-  const [totalPrice, totalQty] = ["1_000_000", -100];
   const [retailItems, wholesalerItems, lotItems] = [
     ["test"],
     [
@@ -109,8 +102,6 @@ test("bad request when field 'retailItems' filled array string", async () => {
     .send({
       code,
       customerName,
-      totalPrice,
-      totalQty,
       retailItems,
       wholesalerItems,
       lotItems,
@@ -120,7 +111,6 @@ test("bad request when field 'retailItems' filled array string", async () => {
 
 test("bad request when field 'retailItems' wrong or less key of object array", async () => {
   const [code, customerName] = [`SL-${randomString(5)}`, "Test Customer"];
-  const [totalPrice, totalQty] = ["1_000_000", -100];
   const [retailItems, wholesalerItems, lotItems] = [
     [
       {
@@ -149,8 +139,6 @@ test("bad request when field 'retailItems' wrong or less key of object array", a
     .send({
       code,
       customerName,
-      totalPrice,
-      totalQty,
       retailItems,
       wholesalerItems,
       lotItems,
@@ -160,7 +148,6 @@ test("bad request when field 'retailItems' wrong or less key of object array", a
 
 test("bad request when field 'wholesalerItems' filled array string", async () => {
   const [code, customerName] = [`SL-${randomString(5)}`, "Test Customer"];
-  const [totalPrice, totalQty] = ["1_000_000", -100];
   const [retailItems, wholesalerItems, lotItems] = [
     [
       {
@@ -184,8 +171,6 @@ test("bad request when field 'wholesalerItems' filled array string", async () =>
     .send({
       code,
       customerName,
-      totalPrice,
-      totalQty,
       retailItems,
       wholesalerItems,
       lotItems,
@@ -195,7 +180,6 @@ test("bad request when field 'wholesalerItems' filled array string", async () =>
 
 test("bad request when field 'wholesalerItems' wrong or less key of object array", async () => {
   const [code, customerName] = [`SL-${randomString(5)}`, "Test Customer"];
-  const [totalPrice, totalQty] = ["1_000_000", -100];
   const [retailItems, wholesalerItems, lotItems] = [
     [
       {
@@ -225,8 +209,6 @@ test("bad request when field 'wholesalerItems' wrong or less key of object array
     .send({
       code,
       customerName,
-      totalPrice,
-      totalQty,
       retailItems,
       wholesalerItems,
       lotItems,
@@ -236,7 +218,6 @@ test("bad request when field 'wholesalerItems' wrong or less key of object array
 
 test("bad request when field 'lotItems' filled array string", async () => {
   const [code, customerName] = [`SL-${randomString(5)}`, "Test Customer"];
-  const [totalPrice, totalQty] = ["1_000_000", -100];
   const [retailItems, wholesalerItems, lotItems] = [
     [
       {
@@ -260,8 +241,6 @@ test("bad request when field 'lotItems' filled array string", async () => {
     .send({
       code,
       customerName,
-      totalPrice,
-      totalQty,
       retailItems,
       wholesalerItems,
       lotItems,
@@ -271,7 +250,6 @@ test("bad request when field 'lotItems' filled array string", async () => {
 
 test("bad request when field 'lotItems' wrong or less key of object array", async () => {
   const [code, customerName] = [`SL-${randomString(5)}`, "Test Customer"];
-  const [totalPrice, totalQty] = ["1_000_000", -100];
   const [retailItems, wholesalerItems, lotItems] = [
     [
       {
@@ -299,8 +277,6 @@ test("bad request when field 'lotItems' wrong or less key of object array", asyn
     .send({
       code,
       customerName,
-      totalPrice,
-      totalQty,
       retailItems,
       wholesalerItems,
       lotItems,
@@ -310,7 +286,6 @@ test("bad request when field 'lotItems' wrong or less key of object array", asyn
 
 test("bad request when field 'lotItems' have 'items' with wrong types", async () => {
   const [code, customerName] = [`SL-${randomString(5)}`, "Test Customer"];
-  const [totalPrice, totalQty] = ["1_000_000", -100];
   const [retailItems, wholesalerItems, lotItems] = [
     [
       {
@@ -341,8 +316,6 @@ test("bad request when field 'lotItems' have 'items' with wrong types", async ()
     .send({
       code,
       customerName,
-      totalPrice,
-      totalQty,
       retailItems,
       wholesalerItems,
       lotItems,
@@ -354,7 +327,6 @@ test("send 400 when sale already exist", async () => {
   const saleDoc = await createSale();
 
   const [code, customerName] = [saleDoc.code, "Test Customer"];
-  const [totalPrice, totalQty] = [1_000_000, 100];
   const [retailItems, wholesalerItems, lotItems] = [
     [
       {
@@ -383,8 +355,6 @@ test("send 400 when sale already exist", async () => {
     .send({
       code,
       customerName,
-      totalPrice,
-      totalQty,
       retailItems,
       wholesalerItems,
       lotItems,
@@ -398,7 +368,6 @@ test("succeffully update items", async () => {
   const item3 = await createItem();
 
   const [code, customerName] = [`SL-${randomString(5)}`, "Test Customer"];
-  const [totalPrice, totalQty] = [1_000_000, 100];
   const [retailItems, wholesalerItems, lotItems] = [
     [
       {
@@ -427,8 +396,6 @@ test("succeffully update items", async () => {
     .send({
       code,
       customerName,
-      totalPrice,
-      totalQty,
       retailItems,
       wholesalerItems,
       lotItems,
@@ -453,7 +420,6 @@ test("send 201 and response notFoundItemsQrCode if provided", async () => {
   const qrCode3 = randomString(5);
 
   const [code, customerName] = [`SL-${randomString(5)}`, "Test Customer"];
-  const [totalPrice, totalQty] = [1_000_000, 100];
   const [retailItems, wholesalerItems, lotItems] = [
     [
       {
@@ -482,8 +448,6 @@ test("send 201 and response notFoundItemsQrCode if provided", async () => {
     .send({
       code,
       customerName,
-      totalPrice,
-      totalQty,
       retailItems,
       wholesalerItems,
       lotItems,
@@ -506,7 +470,6 @@ test("send 201 when successfully create sale", async () => {
   const saleCode = `SL-${randomString(5)}`;
 
   const [code, customerName] = [saleCode, "Test Customer"];
-  const [totalPrice, totalQty] = [1_000_000, 100];
   const [retailItems, wholesalerItems, lotItems] = [
     [
       {
@@ -535,8 +498,6 @@ test("send 201 when successfully create sale", async () => {
     .send({
       code,
       customerName,
-      totalPrice,
-      totalQty,
       retailItems,
       wholesalerItems,
       lotItems,
@@ -556,7 +517,6 @@ test("emits an sale created event", async () => {
   const saleCode = `SL-${randomString(5)}`;
 
   const [code, customerName] = [saleCode, "Test Customer"];
-  const [totalPrice, totalQty] = [1_000_000, 100];
   const [retailItems, wholesalerItems, lotItems] = [
     [
       {
@@ -585,8 +545,6 @@ test("emits an sale created event", async () => {
     .send({
       code,
       customerName,
-      totalPrice,
-      totalQty,
       retailItems,
       wholesalerItems,
       lotItems,

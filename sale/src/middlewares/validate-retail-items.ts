@@ -10,7 +10,7 @@ export const validateRetailItems = (
 ) => {
   const { retailItems } = req.body;
 
-  if (retailItems && retailItems.length > 0) {
+  if (!retailItems || retailItems.length === 0) {
     return next();
   }
 
