@@ -1,6 +1,9 @@
 import express, { Request, Response } from "express";
 import { body } from "express-validator";
 
+// cpu
+import { cpuUsage } from "process";
+
 // middlewares
 import { requireAuth, validateParamId, validateRequest } from "@fujingr/common";
 import { validateDesignsPayload } from "../../middlewares/validate-designs-payload";
@@ -37,6 +40,9 @@ router.put(
   validateRequest,
   validateDesignsPayload,
   async (req: Request, res: Response) => {
+    // cpu load
+    const cpuUsageBefore = cpuUsage();
+
     const { id } = req.params;
     const { designs } = req.body;
 
@@ -51,17 +57,14 @@ router.put(
     const updatedDesigns = updateDesignsPayload(designs, inputSequence);
 
     // save items and update design
-    await saveItems(updatedDesigns);
+    const itemIds = await saveItems(updatedDesigns);
 
     // update inputSequence lot
     lot.set({ inputSequence });
     await lot.save();
 
     // publish event
-    const designsPayloadEvent = await parseLotDesigns(
-      lot.designs,
-      inputSequence
-    );
+    const designsPayloadEvent = await parseLotDesigns(lot.designs, itemIds);
 
     await new LotAddItemsPublisher(natsWrapper.client).publish({
       article: {
@@ -71,7 +74,10 @@ router.put(
       designs: designsPayloadEvent,
     });
 
-    res.status(200).send(lot);
+    // cpu load
+    const cpuUsageAfter = cpuUsage(cpuUsageBefore);
+
+    res.status(200).send({ lot, cpuUsage: cpuUsageAfter });
   }
 );
 

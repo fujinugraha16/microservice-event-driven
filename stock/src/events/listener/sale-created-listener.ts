@@ -5,8 +5,10 @@ import { queueGroupName } from "../../constants/queue-group-name";
 // helpers
 import { itemProcessing } from "../../helpers/item-processing";
 import { stockProcessing } from "../../helpers/stock-processing";
-import { GlobalStockPayload } from "../../constants/global-stock-payload";
 import { globalStocksProcessing } from "../../helpers/global-stocks-processing";
+
+// constants
+import { GlobalStockPayload } from "../../constants/global-stock-payload";
 
 export class SaleCreatedListener extends Listener<SaleCreatedEvent> {
   readonly subject = Subjects.SaleCreated;
