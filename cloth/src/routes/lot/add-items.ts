@@ -66,7 +66,7 @@ router.put(
     // publish event
     const designsPayloadEvent = await parseLotDesigns(lot.designs, itemIds);
 
-    await new LotAddItemsPublisher(natsWrapper.client).publish({
+    new LotAddItemsPublisher(natsWrapper.client).publish({
       article: {
         id: (lot.article as unknown as { id: string }).id,
         name: (lot.article as unknown as { name: string }).name,
